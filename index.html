@@ -151,6 +151,29 @@ tr.new{animation:flash 2.4s ease}
 @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 .hidden{display:none!important}
 
+/* Users & account */
+.user-btn .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:12px;padding:3px 9px;border-radius:999px;background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.3);color:#c4b5fd;white-space:nowrap}
+.chip.gold{background:rgba(234,179,8,.12);border-color:rgba(234,179,8,.35);color:#fde68a}
+.chip.off{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:#fca5a5}
+.chip.ok{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#86efac}
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.perm-grid label,.switch{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);cursor:pointer;font-size:14px;color:var(--text)!important;margin:0!important}
+.perm-grid input,.switch input{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0}
+.perm-grid label:has(input:checked){border-color:rgba(139,92,246,.6);background:rgba(139,92,246,.1)}
+.perm-grid label:has(input:disabled){opacity:.6;cursor:default}
+.perm-tools{display:flex;gap:12px;margin-bottom:8px}
+.perm-tools button{font-size:12px;color:#a5b4fc}
+.acc-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.acc-head .av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.acc-head small{color:var(--muted);display:block;direction:ltr;text-align:right}
+hr.sep{border:0;border-top:1px solid var(--line);margin:16px 0}
+.hint{font-size:12px;color:var(--dim);margin-top:4px}
+.sec-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.sec-head .sec-title{margin:0}
+@media (max-width:480px){.perm-grid{grid-template-columns:1fr}}
+
 /* TV MODE */
 body.tv .wrap{max-width:none;padding:2.2vh 2.5vw}
 body.tv .no-tv{display:none!important}
@@ -194,7 +217,9 @@ body.tv:hover .tv-exit{opacity:.7}
   td[data-l]::before{content:attr(data-l)": ";color:var(--dim);font-size:13px;margin-left:6px}
   .tbl-wrap td.act{padding-top:8px}
   .tbl-scroll{max-height:none}
-  .toolbar .btn span{display:none}
+  .toolbar .btn:not(.user-btn) span{display:none}
+  .toolbar .user-btn #userName{display:none}
+  .toolbar .user-btn{padding:9px 12px}
 }
 </style>
 </head>
@@ -216,13 +241,14 @@ body.tv:hover .tv-exit{opacity:.7}
     </div>
   </header>
 
-  <div id="demoBanner" class="banner hidden no-tv">وضع تجريبي: البيانات محفوظة في هذا المتصفح فقط. أضف مفاتيح Supabase في أعلى الكود لتفعيل قاعدة البيانات والتحديث بين الأجهزة.</div>
+  <div id="demoBanner" class="banner hidden no-tv">وضع تجريبي: البيانات والمستخدمون محفوظون في هذا المتصفح فقط. أضف مفاتيح Supabase في أعلى الكود لتفعيل قاعدة البيانات والحماية الكاملة.</div>
 
   <div class="toolbar no-tv">
     <div class="view-tabs">
       <button data-view="display" class="on">الطلبات الموجودة</button>
       <button data-view="delivered">الطلبات المسلّمة</button>
-      <button data-view="dash" class="admin-only">لوحة التحكم</button>
+      <button data-view="dash" data-perm="dashboard|departments">لوحة التحكم</button>
+      <button data-view="users" data-perm="super">المستخدمون</button>
     </div>
     <div class="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -232,10 +258,10 @@ body.tv:hover .tv-exit{opacity:.7}
       <option value="desc">الأحدث أولاً</option>
       <option value="asc">الأقدم أولاً</option>
     </select>
-    <button class="btn primary admin-only" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span>إضافة طلب</span></button>
+    <button class="btn primary" data-perm="add" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span>إضافة طلب</span></button>
     <button class="btn" id="tvBtn" title="وضع الشاشة الكبيرة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>TV Mode</span></button>
-    <button class="btn" id="loginBtn"><span>دخول المسؤول</span></button>
-    <button class="btn hidden" id="logoutBtn"><span>خروج</span></button>
+    <button class="btn" id="loginBtn" data-perm="guest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span>تسجيل الدخول</span></button>
+    <button class="btn user-btn" id="userBtn" data-perm="any"><span class="av" id="userAv"></span><span id="userName"></span></button>
   </div>
 
   <!-- 1) PENDING (+ TV split with recent delivered) -->
@@ -253,7 +279,7 @@ body.tv:hover .tv-exit{opacity:.7}
         <div class="glass tbl-wrap">
           <div class="tbl-scroll" id="dispScroll">
             <table>
-              <thead><tr><th>الجهة</th><th>الطلب عبارة عن</th><th>تاريخ الوصول</th><th>المدة في المخزن</th><th class="admin-col admin-only"></th></tr></thead>
+              <thead><tr><th>الجهة</th><th>الطلب عبارة عن</th><th>تاريخ الوصول</th><th>المدة في المخزن</th><th class="admin-col"></th></tr></thead>
               <tbody id="dispBody"></tbody>
             </table>
           </div>
@@ -283,7 +309,7 @@ body.tv:hover .tv-exit{opacity:.7}
 
   <!-- 3) DASHBOARD -->
   <section id="viewDash" class="hidden no-tv">
-    <div class="stats">
+    <div class="stats" id="statsWrap" data-perm="dashboard">
       <div class="stat glass s1"><span>إجمالي الطلبات</span><b id="stTotal">0</b></div>
       <div class="stat glass s2"><span>موجودة بالمخزن</span><b id="stPending">0</b></div>
       <div class="stat glass s3"><span>تم تسليمها</span><b id="stDelivered">0</b></div>
@@ -303,13 +329,29 @@ body.tv:hover .tv-exit{opacity:.7}
           </div>
         </div>
       </div>
-      <div class="glass panel">
+      <div class="glass panel" id="depPanel" data-perm="departments">
         <h3>إدارة الجهات</h3>
         <div class="dep-list" id="depList"></div>
         <div class="dep-add">
           <input id="depNew" placeholder="اسم جهة جديدة">
           <button class="btn sm primary" id="depAddBtn">إضافة</button>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4) USERS -->
+  <section id="viewUsers" class="hidden no-tv">
+    <div class="sec-head">
+      <div class="sec-title">المستخدمون والصلاحيات <span class="pill" id="usersPill">0</span></div>
+      <button class="btn primary" id="addUserBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>مستخدم جديد</button>
+    </div>
+    <div class="glass tbl-wrap">
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>اسم المستخدم</th><th>الاسم</th><th>الصلاحيات</th><th>الحالة</th><th>آخر دخول</th><th>الإجراءات</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -379,13 +421,70 @@ body.tv:hover .tv-exit{opacity:.7}
 <!-- Login -->
 <div class="modal" id="mLogin">
   <form class="box" id="loginForm">
-    <h2>دخول المسؤول</h2>
-    <div class="field"><label>البريد الإلكتروني</label><input id="lEmail" type="email" required dir="ltr"></div>
-    <div class="field"><label>كلمة المرور</label><input id="lPass" type="password" required dir="ltr"></div>
+    <h2>تسجيل الدخول</h2>
+    <div class="field"><label>اسم المستخدم</label><input id="lUser" required dir="ltr" autocomplete="username" autocapitalize="off" spellcheck="false"></div>
+    <div class="field"><label>كلمة المرور</label><input id="lPass" type="password" required dir="ltr" autocomplete="current-password"></div>
     <div class="err" id="lErr"></div>
     <div class="row">
-      <button type="submit" class="btn primary">دخول</button>
+      <button type="submit" class="btn primary" id="lOk">دخول</button>
       <button type="button" class="btn" data-close>إلغاء</button>
+    </div>
+  </form>
+</div>
+
+<!-- User add/edit -->
+<div class="modal" id="mUser">
+  <form class="box" id="userForm" style="max-width:520px">
+    <h2 id="uTitle">مستخدم جديد</h2>
+    <div class="field"><label>اسم المستخدم (للدخول)</label><input id="uUser" required dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    <div class="field"><label>الاسم الكامل</label><input id="uName" placeholder="مثال: أحمد محمد"></div>
+    <div id="uPwWrap">
+      <div class="field"><label>كلمة المرور</label><input id="uPass" type="password" dir="ltr" autocomplete="new-password"><div class="hint">4 أحرف أو أرقام على الأقل</div></div>
+    </div>
+    <div class="field">
+      <label>الصلاحيات</label>
+      <div class="perm-tools" id="uPermTools"><button type="button" id="uAll">تحديد الكل</button><button type="button" id="uNone">إلغاء الكل</button></div>
+      <div class="perm-grid" id="uPerms"></div>
+      <div class="hint" id="uSuperHint"></div>
+    </div>
+    <div class="field" id="uActiveWrap"><label class="switch"><input type="checkbox" id="uActive" checked> الحساب مفعّل (يستطيع تسجيل الدخول)</label></div>
+    <div class="err" id="uErr"></div>
+    <div class="row">
+      <button type="submit" class="btn primary" id="uOk">حفظ</button>
+      <button type="button" class="btn" data-close>إلغاء</button>
+    </div>
+  </form>
+</div>
+
+<!-- Reset password (by admin) -->
+<div class="modal" id="mPw">
+  <form class="box" id="pwForm" style="max-width:400px">
+    <h2>تغيير كلمة المرور</h2>
+    <p style="color:var(--muted);font-size:14px;margin:-8px 0 14px" id="pwFor"></p>
+    <div class="field"><label>كلمة المرور الجديدة</label><input id="pwNew" type="password" required dir="ltr" autocomplete="new-password"></div>
+    <div class="field"><label>تأكيد كلمة المرور</label><input id="pwNew2" type="password" required dir="ltr" autocomplete="new-password"></div>
+    <div class="err" id="pwErr"></div>
+    <div class="row">
+      <button type="submit" class="btn primary" id="pwOk">حفظ كلمة المرور</button>
+      <button type="button" class="btn" data-close>إلغاء</button>
+    </div>
+  </form>
+</div>
+
+<!-- My account -->
+<div class="modal" id="mAccount">
+  <form class="box" id="accForm" style="max-width:420px">
+    <div class="acc-head"><div class="av" id="accAv"></div><div><b id="accName"></b><small id="accUser"></small></div></div>
+    <div class="chips" id="accPerms"></div>
+    <hr class="sep">
+    <h2 style="font-size:16px;margin-bottom:12px">تغيير كلمة المرور</h2>
+    <div class="field"><label>كلمة المرور الحالية</label><input id="accOld" type="password" dir="ltr" autocomplete="current-password"></div>
+    <div class="field"><label>كلمة المرور الجديدة</label><input id="accNew" type="password" dir="ltr" autocomplete="new-password"></div>
+    <div class="field"><label>تأكيد كلمة المرور الجديدة</label><input id="accNew2" type="password" dir="ltr" autocomplete="new-password"></div>
+    <div class="err" id="accErr"></div>
+    <div class="row">
+      <button type="submit" class="btn primary" id="accOk">حفظ كلمة المرور</button>
+      <button type="button" class="btn danger" id="logoutBtn">تسجيل الخروج</button>
     </div>
   </form>
 </div>
@@ -397,10 +496,21 @@ body.tv:hover .tv-exit{opacity:.7}
    الإعدادات — ضع مفاتيح مشروع Supabase هنا
    (اتركها فارغة للتجربة: الوضع التجريبي يحفظ في المتصفح)
    ========================================================= */
-const SUPABASE_URL = "https://trezjjvbmqhsqfpstomp.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZXpqanZibXFoc3FmcHN0b21wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MjY2NDksImV4cCI6MjEwNjQwMjY0OX0.p9jumRtrufJ8HDOQJsCP8cA4qubEKgz8WfzwhaAuAUI";
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
 const TV_REFRESH_SECONDS = 30;   // تحديث احتياطي لشاشة العرض
 const TV_DELIVERED_COUNT = 8;    // عدد آخر الطلبات المسلّمة على شاشة التلفزيون
+
+/* الصلاحيات المتاحة */
+const PERMS = [
+  ["add",         "إضافة طلب"],
+  ["edit",        "تعديل الطلبات"],
+  ["delete",      "حذف الطلبات"],
+  ["deliver",     "تسليم الطلبات"],
+  ["departments", "إدارة الجهات"],
+  ["dashboard",   "لوحة التحكم والإحصائيات"],
+];
+const PERM_LABEL = Object.fromEntries(PERMS);
 
 /* ---------------- helpers ---------------- */
 const $ = s => document.querySelector(s);
@@ -417,61 +527,175 @@ const ageColor = d => d<=2 ? "var(--green)" : d<=5 ? "var(--yellow)" : d<=9 ? "v
 const ageText = d => d===0 ? "اليوم" : d===1 ? "يوم واحد" : d===2 ? "يومان" : d<=10 ? `${d} أيام` : `${d} يوماً`;
 const stayText = d => d===0 ? "نفس اليوم" : ageText(d);
 const isDelivered = o => !!o.delivered_date;
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2400); }
+const initial = n => (n||"؟").trim().charAt(0).toUpperCase();
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2600); }
+const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { v==null ? localStorage.removeItem(k) : localStorage.setItem(k,v); } catch(e){} } };
+async function sha256(str){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+const randId = () => (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now().toString(36));
 
 const DEFAULT_DEPS = ["قسم المالية","قسم تقنية المعلومات","قسم الموارد البشرية","قسم المشتريات","قسم الصيانة","قسم المختبر","قسم الإدارة"];
+
+/* ---------------- Session ---------------- */
+const TOKEN_KEY = "wh_session_token";
+const session = { token: ls.get(TOKEN_KEY), user: null };
+const can = p => {
+  const u = session.user;
+  if (p === "guest") return !u;
+  if (!u) return false;
+  if (p === "any") return true;
+  if (p === "super") return !!u.is_super;
+  return p.split("|").some(x => u.is_super || (u.perms||[]).includes(x));
+};
 
 /* ---------------- Data layer ---------------- */
 const useSupabase = !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
 let sb = null;
 
+/* --- Demo store (browser only) --- */
 const LocalStore = (() => {
-  const K = "wh_orders_v2";
+  const K = "wh_orders_v3";
   let mem = null;
   const bc = ("BroadcastChannel" in window) ? new BroadcastChannel("wh_orders") : null;
   const listeners = [];
   const load = () => {
     if (mem) return mem;
-    try { mem = JSON.parse(localStorage.getItem(K)); } catch(e) {}
+    try { mem = JSON.parse(ls.get(K)); } catch(e) {}
     if (!mem) {
       const d = n => { const x=new Date(); x.setDate(x.getDate()-n); return isoOf(x); };
       const now = new Date().toISOString();
-      mem = { seq: 7, depSeq: 7, deps: DEFAULT_DEPS.map((n,i)=>({id:i+1,name:n,sort_order:i+1})), rows: [
-        {id:1, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(0), created_at:now},
-        {id:2, department:"قسم تقنية المعلومات", item:"طابعات", arrival_date:d(4), created_at:now},
-        {id:3, department:"قسم المشتريات", item:"أجهزة ماسح ضوئي", arrival_date:d(7), created_at:now},
-        {id:4, department:"قسم الموارد البشرية", item:"شاشات كمبيوتر", arrival_date:d(12), created_at:now},
-        {id:5, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(4), created_at:now, delivered_date:d(0), receiver_name:"أحمد محمد", delivered_at:now},
-        {id:6, department:"قسم تقنية المعلومات", item:"شاشات", arrival_date:d(3), created_at:now, delivered_date:d(1), receiver_name:"خالد علي", delivered_at:now},
-        {id:7, department:"قسم الصيانة", item:"كابلات شبكة", arrival_date:d(9), created_at:now, delivered_date:d(2), receiver_name:"سالم الحارثي", delivered_at:now},
-      ]};
+      mem = { seq: 7, depSeq: 7, userSeq: 1, sessions: {},
+        deps: DEFAULT_DEPS.map((n,i)=>({id:i+1,name:n,sort_order:i+1})),
+        users: [{ id:1, username:"Admin272200", full_name:"المسؤول الرئيسي", salt:"s7l-demo-a1",
+                  hash:"cf26f78a7532c0a08c2da049569d207098ca1eb45477fc1957a74a83742a941e",
+                  is_super:true, perms:PERMS.map(p=>p[0]), active:true, failed:0, locked_until:0, created_at:now, last_login:null }],
+        rows: [
+          {id:1, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(0), created_at:now, created_by:"Admin272200"},
+          {id:2, department:"قسم تقنية المعلومات", item:"طابعات", arrival_date:d(4), created_at:now, created_by:"Admin272200"},
+          {id:3, department:"قسم المشتريات", item:"أجهزة ماسح ضوئي", arrival_date:d(7), created_at:now, created_by:"Admin272200"},
+          {id:4, department:"قسم الموارد البشرية", item:"شاشات كمبيوتر", arrival_date:d(12), created_at:now, created_by:"Admin272200"},
+          {id:5, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(4), created_at:now, created_by:"Admin272200", delivered_date:d(0), receiver_name:"أحمد محمد", delivered_at:now, delivered_by:"Admin272200"},
+          {id:6, department:"قسم تقنية المعلومات", item:"شاشات", arrival_date:d(3), created_at:now, created_by:"Admin272200", delivered_date:d(1), receiver_name:"خالد علي", delivered_at:now, delivered_by:"Admin272200"},
+          {id:7, department:"قسم الصيانة", item:"كابلات شبكة", arrival_date:d(9), created_at:now, created_by:"Admin272200", delivered_date:d(2), receiver_name:"سالم الحارثي", delivered_at:now, delivered_by:"Admin272200"},
+        ]};
     }
     return mem;
   };
   const notify = () => listeners.forEach(f=>f());
-  const save = () => { try { localStorage.setItem(K, JSON.stringify(mem)); } catch(e) {} bc && bc.postMessage("changed"); notify(); };
+  const save = () => { ls.set(K, JSON.stringify(mem)); bc && bc.postMessage("changed"); notify(); };
   window.addEventListener("storage", e => { if (e.key===K) { mem=null; notify(); } });
   bc && (bc.onmessage = () => { mem=null; notify(); });
+  const pub = u => ({ id:u.id, username:u.username, full_name:u.full_name, is_super:u.is_super, perms:[...u.perms], active:u.active,
+                      last_login:u.last_login, created_at:u.created_at, locked: u.locked_until > Date.now() });
+  const auth = perm => {
+    const s = load(), ses = s.sessions[session.token];
+    if (!ses || ses.exp < Date.now()) throw new Error("unauthorized");
+    const u = s.users.find(x=>x.id===ses.user_id);
+    if (!u || !u.active) throw new Error("unauthorized");
+    if (perm==="super" && !u.is_super) throw new Error("forbidden");
+    if (perm && perm!=="super" && !(u.is_super || u.perms.includes(perm))) throw new Error("forbidden");
+    ses.exp = Date.now() + 12*3600e3;
+    return u;
+  };
+  const checkPw = p => { if (!p || p.length < 4) throw new Error("كلمة المرور يجب أن تكون 4 أحرف على الأقل"); };
+  const setPw = async (u, p) => { u.salt = randId(); u.hash = await sha256(u.salt + ":" + p); };
   return {
+    async login(username, password){
+      const s = load(), u = s.users.find(x => x.username.toLowerCase() === username.trim().toLowerCase());
+      if (!u) throw new Error("bad");
+      if (u.locked_until > Date.now()) throw new Error("locked");
+      if (!u.active) throw new Error("inactive");
+      if (await sha256(u.salt + ":" + password) !== u.hash) {
+        u.failed = (u.failed||0) + 1; if (u.failed >= 5) u.locked_until = Date.now() + 15*60e3; save();
+        throw new Error("bad");
+      }
+      u.failed = 0; u.locked_until = 0; u.last_login = new Date().toISOString();
+      const token = randId(); s.sessions[token] = { user_id:u.id, exp: Date.now() + 12*3600e3 }; save();
+      return { token, user: pub(u) };
+    },
+    async me(){ try { return pub(auth()); } catch(e){ return null; } },
+    async logout(){ const s=load(); delete s.sessions[session.token]; save(); },
+    async changeMyPassword(oldP, newP){
+      const u = auth();
+      if (await sha256(u.salt + ":" + oldP) !== u.hash) throw new Error("كلمة المرور الحالية غير صحيحة");
+      checkPw(newP); await setPw(u, newP); save();
+    },
     async list(){ return load().rows.map(r=>({...r})); },
-    async add(r){ const s=load(); s.rows.push({...r, id:++s.seq, created_at:new Date().toISOString()}); save(); },
-    async update(id,r){ const s=load(); Object.assign(s.rows.find(o=>o.id===id), r); save(); },
-    async remove(id){ const s=load(); s.rows=s.rows.filter(o=>o.id!==id); save(); },
     async listDeps(){ return [...load().deps].sort((a,b)=>a.sort_order-b.sort_order); },
-    async addDep(name){ const s=load(); if(s.deps.some(d=>d.name===name)) throw new Error("الجهة موجودة مسبقاً"); s.deps.push({id:++s.depSeq,name,sort_order:s.depSeq}); save(); },
-    async removeDep(id){ const s=load(); s.deps=s.deps.filter(d=>d.id!==id); save(); },
+    async add(r){ const u=auth("add"), s=load(); s.rows.push({...r, id:++s.seq, created_at:new Date().toISOString(), created_by:u.username}); save(); },
+    async update(id, r){
+      auth("edit"); const x = load().rows.find(o=>o.id===id);
+      Object.assign(x, {department:r.department, item:r.item, arrival_date:r.arrival_date});
+      if (x.delivered_date && r.delivered_date) Object.assign(x, {delivered_date:r.delivered_date, receiver_name:r.receiver_name});
+      save();
+    },
+    async remove(id){ auth("delete"); const s=load(); s.rows=s.rows.filter(o=>o.id!==id); save(); },
+    async deliver(id, date, name){
+      const u=auth("deliver"), x=load().rows.find(o=>o.id===id);
+      if (!x || x.delivered_date) throw new Error("الطلب غير موجود أو تم تسليمه مسبقاً");
+      Object.assign(x, {delivered_date:date, receiver_name:name, delivered_at:new Date().toISOString(), delivered_by:u.username}); save();
+    },
+    async undeliver(id){ auth("deliver"); Object.assign(load().rows.find(o=>o.id===id), {delivered_date:null, receiver_name:null, delivered_at:null, delivered_by:null}); save(); },
+    async addDep(name){ auth("departments"); const s=load(); if(s.deps.some(d=>d.name===name)) throw new Error("الجهة موجودة مسبقاً"); s.deps.push({id:++s.depSeq,name,sort_order:s.depSeq}); save(); },
+    async removeDep(id){ auth("departments"); const s=load(); s.deps=s.deps.filter(d=>d.id!==id); save(); },
+    async users(){ auth("super"); return load().users.map(pub).sort((a,b)=> (b.is_super-a.is_super) || a.created_at.localeCompare(b.created_at)); },
+    async saveUser(id, f){
+      auth("super"); const s = load();
+      if (!f.username) throw new Error("اكتب اسم المستخدم");
+      if (s.users.some(x => x.username.toLowerCase()===f.username.toLowerCase() && x.id!==id)) throw new Error("اسم المستخدم مستخدم مسبقاً");
+      if (!id) {
+        checkPw(f.password);
+        const u = { id:++s.userSeq, username:f.username, full_name:f.full_name, is_super:false, perms:f.perms, active:f.active, failed:0, locked_until:0, created_at:new Date().toISOString(), last_login:null };
+        await setPw(u, f.password); s.users.push(u);
+      } else {
+        const u = s.users.find(x=>x.id===id);
+        Object.assign(u, {username:f.username, full_name:f.full_name});
+        if (!u.is_super) { Object.assign(u, {perms:f.perms, active:f.active}); if (!f.active) for (const t in s.sessions) if (s.sessions[t].user_id===id) delete s.sessions[t]; }
+      }
+      save();
+    },
+    async setPassword(id, p){
+      auth("super"); checkPw(p); const s=load(), u=s.users.find(x=>x.id===id);
+      await setPw(u, p); u.failed=0; u.locked_until=0;
+      for (const t in s.sessions) if (s.sessions[t].user_id===id && t!==session.token) delete s.sessions[t];
+      save();
+    },
+    async deleteUser(id){ auth("super"); const s=load(); if (s.users.find(x=>x.id===id)?.is_super) throw new Error("لا يمكن حذف المسؤول الرئيسي"); s.users=s.users.filter(x=>x.id!==id); save(); },
     subscribe(fn){ listeners.push(fn); },
   };
 })();
 
+/* --- Supabase store --- */
+const rpc = async (fn, args = {}) => {
+  const { data, error } = await sb.rpc(fn, { p_token: session.token, ...args });
+  if (error) throw new Error(error.message);
+  return data;
+};
 const SupaStore = {
+  async login(username, password){
+    const { data, error } = await sb.rpc("app_login", { p_username: username, p_password: password });
+    if (error) throw new Error(error.message);
+    if (!data.ok) throw new Error(data.error);
+    return { token: data.token, user: data.user };
+  },
+  async me(){ if (!session.token) return null; const { data } = await sb.rpc("app_me", { p_token: session.token }); return data || null; },
+  async logout(){ if (session.token) await sb.rpc("app_logout", { p_token: session.token }); },
+  async changeMyPassword(o, n){ await rpc("app_change_my_password", { p_old:o, p_new:n }); },
   async list(){ const {data,error}=await sb.from("requests").select("*"); if(error) throw error; return data; },
-  async add(r){ const {error}=await sb.from("requests").insert(r); if(error) throw error; },
-  async update(id,r){ const {error}=await sb.from("requests").update(r).eq("id",id); if(error) throw error; },
-  async remove(id){ const {error}=await sb.from("requests").delete().eq("id",id); if(error) throw error; },
   async listDeps(){ const {data,error}=await sb.from("departments").select("*").order("sort_order"); if(error) throw error; return data; },
-  async addDep(name){ const {error}=await sb.from("departments").insert({name,sort_order:Math.floor(Date.now()/1000)}); if(error) throw new Error(error.code==="23505"?"الجهة موجودة مسبقاً":error.message); },
-  async removeDep(id){ const {error}=await sb.from("departments").delete().eq("id",id); if(error) throw error; },
+  async add(r){ await rpc("req_add", { p_department:r.department, p_item:r.item, p_arrival:r.arrival_date }); },
+  async update(id, r){ await rpc("req_update", { p_id:id, p_department:r.department, p_item:r.item, p_arrival:r.arrival_date, p_delivered_date:r.delivered_date||null, p_receiver:r.receiver_name||null }); },
+  async remove(id){ await rpc("req_delete", { p_id:id }); },
+  async deliver(id, date, name){ await rpc("req_deliver", { p_id:id, p_date:date, p_receiver:name }); },
+  async undeliver(id){ await rpc("req_undeliver", { p_id:id }); },
+  async addDep(name){ await rpc("dep_add", { p_name:name }); },
+  async removeDep(id){ await rpc("dep_delete", { p_id:id }); },
+  async users(){ return await rpc("users_list"); },
+  async saveUser(id, f){ await rpc("user_save", { p_id:id||null, p_username:f.username, p_full_name:f.full_name, p_password:f.password||null, p_perms:f.perms, p_active:f.active }); },
+  async setPassword(id, p){ await rpc("user_set_password", { p_id:id, p_new:p }); },
+  async deleteUser(id){ await rpc("user_delete", { p_id:id }); },
   subscribe(fn){
     sb.channel("wh-live")
       .on("postgres_changes",{event:"*",schema:"public",table:"requests"},fn)
@@ -482,11 +706,25 @@ const SupaStore = {
 
 let Store = LocalStore;
 
+/* ---------------- Errors ---------------- */
+const ERR_TEXT = {
+  bad: "اسم المستخدم أو كلمة المرور غير صحيحة",
+  locked: "تم إيقاف الحساب مؤقتاً بسبب محاولات خاطئة متكررة. حاول بعد 15 دقيقة",
+  inactive: "هذا الحساب موقوف. تواصل مع المسؤول",
+  forbidden: "ليس لديك صلاحية لهذا الإجراء",
+};
+function handleErr(err, el){
+  const m = String(err?.message || err);
+  if (m === "unauthorized") { setUser(null); closeAll(); toast("انتهت الجلسة، سجّل الدخول مرة أخرى"); return; }
+  const text = ERR_TEXT[m] || m;
+  if (el) el.textContent = text; else toast(text);
+}
+
 /* ---------------- State ---------------- */
 const params = new URLSearchParams(location.search);
-const state = { rows:[], deps:[], q:"", sort:"desc", view:"display", isAdmin:false, tv:false,
+const state = { rows:[], deps:[], users:[], q:"", sort:"desc", view:"display", tv:false,
   lockedTV: params.has("tv") || location.hash==="#tv",
-  editingId:null, deliveringId:null, confirmFn:null, lastIds:new Set(), firstLoad:true };
+  editingId:null, deliveringId:null, editingUserId:null, pwUserId:null, confirmFn:null, lastIds:new Set(), firstLoad:true };
 
 async function refresh(){
   try {
@@ -494,6 +732,10 @@ async function refresh(){
     state.rows = rows; state.deps = deps;
     render();
   } catch(e){ console.error(e); toast("تعذّر تحميل البيانات"); }
+}
+async function refreshUsers(){
+  if (!can("super")) return;
+  try { state.users = await Store.users(); renderUsers(); } catch(e){ handleErr(e); }
 }
 
 function matches(o, q){
@@ -511,7 +753,15 @@ function listDelivered(){
   return state.rows.filter(o => isDelivered(o) && matches(o,q))
     .sort((a,b) => (a.delivered_date.localeCompare(b.delivered_date) || String(a.delivered_at||"").localeCompare(String(b.delivered_at||""))) * dir);
 }
-const initial = n => (n||"؟").trim().charAt(0);
+
+function pendingActions(o, withHist){
+  return [
+    can("deliver") ? `<button class="btn sm success" data-deliver="${o.id}">تسليم الطلب</button>` : "",
+    can("edit")    ? `<button class="btn sm" data-edit="${o.id}">تعديل</button>` : "",
+    withHist       ? `<button class="btn sm" data-hist="${o.id}">السجل</button>` : "",
+    can("delete")  ? `<button class="btn sm danger" data-del="${o.id}">حذف</button>` : "",
+  ].join("");
+}
 
 function render(){
   const t = todayISO();
@@ -523,7 +773,7 @@ function render(){
   // 1) pending
   const pend = listPending();
   $("#pendPill").textContent = pend.length;
-  const showAct = state.isAdmin && !state.tv;
+  const showAct = !state.tv && (can("deliver") || can("edit") || can("delete"));
   $("#dispBody").innerHTML = pend.length ? pend.map(o => {
     const d = daysSince(o.arrival_date);
     const isNew = !state.firstLoad && !state.lastIds.has(o.id);
@@ -532,7 +782,7 @@ function render(){
       <td data-l="الطلب">${esc(o.item)}</td>
       <td data-l="تاريخ الوصول"><span class="date">${fmtDate(o.arrival_date)}</span></td>
       <td data-l="المدة"><span class="age">${ageText(d)}</span></td>
-      ${showAct ? `<td class="admin-col act"><button class="btn sm success" data-deliver="${o.id}">تسليم الطلب</button></td>` : ""}
+      ${showAct ? `<td class="admin-col act"><div class="actions">${pendingActions(o,false)}</div></td>` : ""}
     </tr>`;
   }).join("") : `<tr><td colspan="5" class="empty">${state.q?"لا توجد نتائج مطابقة":"لا توجد طلبات في المخزن حالياً"}</td></tr>`;
   state.lastIds = new Set(pendingAll.map(r=>r.id)); state.firstLoad = false;
@@ -559,18 +809,22 @@ function render(){
       <td data-l="بقي"><span class="age" style="--c:${ageColor(stay)}">${stayText(stay)}</span></td>
       <td class="act"><div class="actions">
         <button class="btn sm" data-hist="${o.id}">السجل</button>
-        ${state.isAdmin ? `<button class="btn sm" data-edit="${o.id}">تعديل</button><button class="btn sm" data-undo="${o.id}">إلغاء التسليم</button><button class="btn sm danger" data-del="${o.id}">حذف</button>` : ""}
+        ${can("edit") ? `<button class="btn sm" data-edit="${o.id}">تعديل</button>` : ""}
+        ${can("deliver") ? `<button class="btn sm" data-undo="${o.id}">إلغاء التسليم</button>` : ""}
+        ${can("delete") ? `<button class="btn sm danger" data-del="${o.id}">حذف</button>` : ""}
       </div></td></tr>`;
   }).join("") : `<tr><td colspan="7" class="empty">${state.q?"لا توجد نتائج مطابقة":"لا توجد طلبات مسلّمة بعد"}</td></tr>`;
 
   // 3) dashboard
-  if (state.isAdmin) {
+  if (can("dashboard")) {
     $("#stTotal").textContent = state.rows.length;
     $("#stPending").textContent = pendingAll.length;
     $("#stDelivered").textContent = deliveredAll.length;
     $("#stToday").textContent = state.rows.filter(o=>o.arrival_date.slice(0,10)===t).length;
     $("#stDelToday").textContent = deliveredAll.filter(o=>o.delivered_date.slice(0,10)===t).length;
     $("#stLate").textContent = pendingAll.filter(o=>daysSince(o.arrival_date)>=10).length;
+  }
+  if (can("dashboard|departments")) {
     $("#dashBody").innerHTML = pend.length ? pend.map(o => {
       const d = daysSince(o.arrival_date);
       return `<tr style="--c:${ageColor(d)}">
@@ -578,35 +832,64 @@ function render(){
         <td data-l="الطلب">${esc(o.item)}</td>
         <td data-l="الوصول"><span class="date">${fmtDate(o.arrival_date)}</span></td>
         <td data-l="المدة"><span class="age">${ageText(d)}</span></td>
-        <td class="act"><div class="actions">
-          <button class="btn sm success" data-deliver="${o.id}">تسليم</button>
-          <button class="btn sm" data-edit="${o.id}">تعديل</button>
-          <button class="btn sm" data-hist="${o.id}">السجل</button>
-          <button class="btn sm danger" data-del="${o.id}">حذف</button>
-        </div></td></tr>`;
+        <td class="act"><div class="actions">${pendingActions(o,true)}</div></td></tr>`;
     }).join("") : `<tr><td colspan="5" class="empty">لا توجد طلبات في المخزن</td></tr>`;
+  }
+  if (can("departments")) {
     $("#depList").innerHTML = state.deps.map(d =>
       `<div class="dep-item"><span>${esc(d.name)}</span><button class="btn sm danger" data-depdel="${d.id}">حذف</button></div>`).join("")
       || `<div class="empty" style="padding:20px">لا توجد جهات</div>`;
   }
-  // receivers suggestions
   $("#rcvList").innerHTML = [...new Set(deliveredAll.map(o=>o.receiver_name).filter(Boolean))].map(n=>`<option value="${esc(n)}">`).join("");
 }
 
+const permChips = u => u.is_super
+  ? `<span class="chip gold">المسؤول الرئيسي — كل الصلاحيات</span>`
+  : (u.perms||[]).length ? u.perms.map(p=>`<span class="chip">${esc(PERM_LABEL[p]||p)}</span>`).join("") : `<span class="chip off">عرض فقط</span>`;
+
+function renderUsers(){
+  $("#usersPill").textContent = state.users.length;
+  $("#usersBody").innerHTML = state.users.map(u => `<tr style="--c:${u.is_super?"var(--yellow)":u.active?"var(--accent)":"var(--dim)"}">
+      <td class="dep"><span class="date">${esc(u.username)}</span></td>
+      <td data-l="الاسم">${esc(u.full_name||"—")}</td>
+      <td data-l="الصلاحيات"><div class="chips">${permChips(u)}</div></td>
+      <td data-l="الحالة">${!u.active ? `<span class="chip off">موقوف</span>` : u.locked ? `<span class="chip off">مقفل مؤقتاً</span>` : `<span class="chip ok">مفعّل</span>`}</td>
+      <td data-l="آخر دخول"><span class="date" style="font-size:13px;color:var(--muted)">${u.last_login ? fmtStamp(u.last_login) : "—"}</span></td>
+      <td class="act"><div class="actions">
+        <button class="btn sm" data-uedit="${u.id}">تعديل</button>
+        <button class="btn sm" data-upw="${u.id}">كلمة المرور</button>
+        ${u.is_super ? "" : `<button class="btn sm danger" data-udel="${u.id}">حذف</button>`}
+      </div></td></tr>`).join("") || `<tr><td colspan="6" class="empty">لا يوجد مستخدمون</td></tr>`;
+}
+
 /* ---------------- Views / roles ---------------- */
-const VIEWS = {display:"#viewDisplay", delivered:"#viewDelivered", dash:"#viewDash"};
+const VIEWS = {display:"#viewDisplay", delivered:"#viewDelivered", dash:"#viewDash", users:"#viewUsers"};
+const SUBTITLES = {display:"طلبات الجهات الواردة", delivered:"سجل الطلبات المسلّمة للجهات", dash:"لوحة التحكم", users:"إدارة المستخدمين والصلاحيات"};
+const VIEW_PERM = {dash:"dashboard|departments", users:"super"};
 function setView(v){
+  if (VIEW_PERM[v] && !can(VIEW_PERM[v])) v = "display";
   state.view = v;
   Object.entries(VIEWS).forEach(([k,sel]) => $(sel).classList.toggle("hidden", k!==v));
   document.querySelectorAll(".view-tabs button").forEach(b => b.classList.toggle("on", b.dataset.view===v));
-  $("#subtitle").textContent = v==="delivered" ? "سجل الطلبات المسلّمة للجهات" : v==="dash" ? "لوحة التحكم" : "طلبات الجهات الواردة";
+  $("#subtitle").textContent = state.tv ? "الطلبات الواردة والمسلّمة" : SUBTITLES[v];
+  if (v === "users") refreshUsers();
 }
 function applyRole(){
-  document.querySelectorAll(".admin-only").forEach(el => el.classList.toggle("hidden", !state.isAdmin));
-  $("#loginBtn").classList.toggle("hidden", state.isAdmin || !useSupabase);
-  $("#logoutBtn").classList.toggle("hidden", !state.isAdmin || !useSupabase);
-  if (!state.isAdmin && state.view==="dash") setView("display");
+  document.querySelectorAll("[data-perm]").forEach(el => el.classList.toggle("hidden", !can(el.dataset.perm)));
+  const u = session.user;
+  if (u) {
+    $("#userName").textContent = u.full_name || u.username;
+    $("#userAv").textContent = initial(u.full_name || u.username);
+  }
+  setView(state.view);
   render();
+}
+function setUser(u, token){
+  session.user = u;
+  if (token !== undefined) session.token = token;
+  if (!u) session.token = null;
+  ls.set(TOKEN_KEY, session.token);
+  applyRole();
 }
 
 /* ---------------- TV mode ---------------- */
@@ -615,7 +898,7 @@ function setTV(on){
   state.tv = on;
   document.body.classList.toggle("tv", on);
   $("#tvExit").classList.toggle("hidden", !on || state.lockedTV);
-  if (on) { setView("display"); state.q=""; $("#q").value=""; state.sort="desc"; $("#sort").value="desc"; $("#subtitle").textContent="الطلبات الواردة والمسلّمة"; startAutoScroll(); try{document.documentElement.requestFullscreen?.()}catch(e){} }
+  if (on) { setView("display"); state.q=""; $("#q").value=""; state.sort="desc"; $("#sort").value="desc"; startAutoScroll(); try{document.documentElement.requestFullscreen?.()}catch(e){} }
   else { stopAutoScroll(); setView(state.view); if (document.fullscreenElement) document.exitFullscreen?.(); }
   render();
 }
@@ -645,7 +928,9 @@ document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => b.close
 document.querySelectorAll(".modal").forEach(m => m.addEventListener("click", e => { if (e.target===m) m.classList.remove("open"); }));
 const byId = id => state.rows.find(r => r.id == id);
 const summaryHTML = o => `<div><b>الجهة:</b>${esc(o.department)}</div><div><b>الطلب:</b>${esc(o.item)}</div><div><b>تاريخ الوصول:</b><span class="date">${fmtDate(o.arrival_date)}</span></div>`;
+async function busy(btn, fn){ btn.disabled = true; try { await fn(); } finally { btn.disabled = false; } }
 
+/* Request form */
 function fillDepSelect(selected){
   const names = state.deps.map(d=>d.name);
   const isOther = selected && !names.includes(selected);
@@ -671,8 +956,7 @@ function openForm(row){
   $("#fErr").textContent = "";
   open("#mForm"); setTimeout(()=>$("#fItem").focus(), 50);
 }
-
-$("#form").onsubmit = async e => {
+$("#form").onsubmit = e => {
   e.preventDefault();
   let dep = $("#fDep").value; if (dep==="__other") dep = $("#fDepOther").value.trim();
   const item = $("#fItem").value.trim(), date = $("#fDate").value;
@@ -687,14 +971,14 @@ $("#form").onsubmit = async e => {
     if (dd < date) return $("#fErr").textContent = "تاريخ التسليم لا يمكن أن يكون قبل تاريخ الوصول";
     Object.assign(rec, {delivered_date:dd, receiver_name:rn});
   }
-  const btn = $("#fSave"); btn.disabled = true;
-  try {
-    if (state.editingId) { await Store.update(state.editingId, rec); toast("تم تحديث الطلب"); }
-    else { await Store.add(rec); toast("تمت إضافة الطلب"); }
-    $("#mForm").classList.remove("open");
-    await refresh();
-  } catch(err){ $("#fErr").textContent = "تعذّر الحفظ: " + (err.message||err); }
-  btn.disabled = false;
+  busy($("#fSave"), async () => {
+    try {
+      if (state.editingId) { await Store.update(state.editingId, rec); toast("تم تحديث الطلب"); }
+      else { await Store.add(rec); toast("تمت إضافة الطلب"); }
+      $("#mForm").classList.remove("open");
+      await refresh();
+    } catch(err){ handleErr(err, $("#fErr")); }
+  });
 };
 
 /* Deliver */
@@ -705,32 +989,32 @@ function openDeliver(o){
   $("#dName").value = ""; $("#dErr").textContent = "";
   open("#mDeliver"); setTimeout(()=>$("#dName").focus(), 50);
 }
-$("#deliverForm").onsubmit = async e => {
+$("#deliverForm").onsubmit = e => {
   e.preventDefault();
   const o = byId(state.deliveringId), dd = $("#dDate").value, rn = $("#dName").value.trim();
   if (!dd) return $("#dErr").textContent = "حدد تاريخ التسليم";
   if (!rn) return $("#dErr").textContent = "اكتب اسم المستلم";
   if (dd < o.arrival_date.slice(0,10)) return $("#dErr").textContent = "تاريخ التسليم لا يمكن أن يكون قبل تاريخ الوصول";
-  const btn = $("#dOk"); btn.disabled = true;
-  try {
-    await Store.update(o.id, {delivered_date:dd, receiver_name:rn, delivered_at:new Date().toISOString()});
-    $("#mDeliver").classList.remove("open");
-    toast(`تم تسليم الطلب إلى ${rn}`);
-    await refresh();
-  } catch(err){ $("#dErr").textContent = "تعذّر الحفظ: " + (err.message||err); }
-  btn.disabled = false;
+  busy($("#dOk"), async () => {
+    try {
+      await Store.deliver(o.id, dd, rn);
+      $("#mDeliver").classList.remove("open");
+      toast(`تم تسليم الطلب إلى ${rn}`);
+      await refresh();
+    } catch(err){ handleErr(err, $("#dErr")); }
+  });
 };
 
 /* History timeline */
 function openHistory(o){
   const del = isDelivered(o);
-  const stayEnd = del ? o.delivered_date : todayISO();
-  const stay = daysBetween(o.arrival_date, stayEnd);
+  const stay = daysBetween(o.arrival_date, del ? o.delivered_date : todayISO());
+  const by = n => n ? ` · بواسطة ${esc(n)}` : "";
   const steps = [
     {t:"وصل الطلب إلى المخزن", p:`الجهة: ${esc(o.department)} — ${esc(o.item)}`, c:"var(--accent)"},
-    {t:"تم تسجيل تاريخ الوصول", p:`<span class="date">${fmtDate(o.arrival_date)}</span>${o.created_at?` · سُجّل في النظام ${fmtStamp(o.created_at)}`:""}`, c:"var(--accent2)"},
+    {t:"تم تسجيل تاريخ الوصول", p:`<span class="date">${fmtDate(o.arrival_date)}</span>${o.created_at?` · سُجّل ${fmtStamp(o.created_at)}`:""}${by(o.created_by)}`, c:"var(--accent2)"},
     {t: del ? "بقي في المخزن" : "موجود في المخزن حالياً", p: del ? `المدة: ${stayText(stay)}` : `منذ ${ageText(stay)}`, c: ageColor(stay)},
-    {t:"تم تسليم الطلب", p: del ? `تاريخ التسليم: <span class="date">${fmtDate(o.delivered_date)}</span>${o.delivered_at?` · سُجّل ${fmtStamp(o.delivered_at)}`:""}` : "بانتظار التسليم", c:"var(--teal)", off:!del},
+    {t:"تم تسليم الطلب", p: del ? `تاريخ التسليم: <span class="date">${fmtDate(o.delivered_date)}</span>${o.delivered_at?` · سُجّل ${fmtStamp(o.delivered_at)}`:""}${by(o.delivered_by)}` : "بانتظار التسليم", c:"var(--teal)", off:!del},
     {t:"اسم المستلم", p: del ? esc(o.receiver_name) : "—", c:"var(--teal)", off:!del},
     {t:"انتقل إلى الطلبات المسلّمة", p: del ? "مكتمل" : "—", c:"var(--green)", off:!del},
   ];
@@ -739,16 +1023,118 @@ function openHistory(o){
   open("#mHist");
 }
 
-/* Confirm (delete / undo delivery) */
+/* Confirm */
 function askConfirm({title, info, okText, danger=true, fn}){
   $("#cTitle").textContent = title; $("#cInfo").textContent = info;
   $("#cOk").textContent = okText; $("#cOk").className = "btn " + (danger ? "danger" : "primary");
   $("#cIcon").classList.toggle("hidden", !danger);
   state.confirmFn = fn; open("#mConfirm");
 }
-$("#cOk").onclick = async () => {
+$("#cOk").onclick = () => busy($("#cOk"), async () => {
   try { await state.confirmFn(); $("#mConfirm").classList.remove("open"); refresh(); }
-  catch(err){ toast("تعذّر تنفيذ العملية: " + (err.message||err)); }
+  catch(err){ $("#mConfirm").classList.remove("open"); handleErr(err); }
+});
+
+/* Users: add / edit */
+function openUser(u){
+  state.editingUserId = u ? u.id : null;
+  $("#uTitle").textContent = u ? "تعديل المستخدم" : "مستخدم جديد";
+  $("#uUser").value = u?.username || "";
+  $("#uName").value = u?.full_name || "";
+  $("#uPass").value = "";
+  $("#uPwWrap").classList.toggle("hidden", !!u);
+  const sup = !!u?.is_super;
+  $("#uPerms").innerHTML = PERMS.map(([k,l]) =>
+    `<label><input type="checkbox" value="${k}" ${sup || u?.perms?.includes(k) ? "checked" : ""} ${sup?"disabled":""}>${l}</label>`).join("");
+  $("#uPermTools").classList.toggle("hidden", sup);
+  $("#uSuperHint").textContent = sup ? "المسؤول الرئيسي يملك كل الصلاحيات بشكل دائم، ويدير المستخدمين." : "بدون أي صلاحية يستطيع المستخدم عرض الطلبات فقط.";
+  $("#uActive").checked = u ? u.active : true;
+  $("#uActiveWrap").classList.toggle("hidden", sup);
+  $("#uErr").textContent = "";
+  open("#mUser"); setTimeout(()=>$("#uUser").focus(), 50);
+}
+$("#uAll").onclick = () => document.querySelectorAll("#uPerms input").forEach(i=>i.checked=true);
+$("#uNone").onclick = () => document.querySelectorAll("#uPerms input").forEach(i=>i.checked=false);
+$("#addUserBtn").onclick = () => openUser(null);
+$("#userForm").onsubmit = e => {
+  e.preventDefault();
+  const f = {
+    username: $("#uUser").value.trim(),
+    full_name: $("#uName").value.trim(),
+    password: $("#uPass").value,
+    perms: [...document.querySelectorAll("#uPerms input:checked")].map(i=>i.value),
+    active: $("#uActive").checked,
+  };
+  if (!f.username) return $("#uErr").textContent = "اكتب اسم المستخدم";
+  if (/\s/.test(f.username)) return $("#uErr").textContent = "اسم المستخدم بدون مسافات";
+  if (!state.editingUserId && f.password.length < 4) return $("#uErr").textContent = "كلمة المرور يجب أن تكون 4 أحرف على الأقل";
+  busy($("#uOk"), async () => {
+    try {
+      await Store.saveUser(state.editingUserId, f);
+      $("#mUser").classList.remove("open");
+      toast(state.editingUserId ? "تم تحديث المستخدم" : "تمت إضافة المستخدم");
+      if (state.editingUserId === session.user?.id) { const me = await Store.me(); if (me) setUser(me); }
+      refreshUsers();
+    } catch(err){ handleErr(err, $("#uErr")); }
+  });
+};
+
+/* Users: reset password */
+function openPw(u){
+  state.pwUserId = u.id;
+  $("#pwFor").textContent = `للمستخدم: ${u.full_name ? u.full_name + " — " : ""}${u.username}`;
+  $("#pwNew").value = ""; $("#pwNew2").value = ""; $("#pwErr").textContent = "";
+  open("#mPw"); setTimeout(()=>$("#pwNew").focus(), 50);
+}
+$("#pwForm").onsubmit = e => {
+  e.preventDefault();
+  const a = $("#pwNew").value, b = $("#pwNew2").value;
+  if (a.length < 4) return $("#pwErr").textContent = "كلمة المرور يجب أن تكون 4 أحرف على الأقل";
+  if (a !== b) return $("#pwErr").textContent = "كلمتا المرور غير متطابقتين";
+  busy($("#pwOk"), async () => {
+    try { await Store.setPassword(state.pwUserId, a); $("#mPw").classList.remove("open"); toast("تم تغيير كلمة المرور"); refreshUsers(); }
+    catch(err){ handleErr(err, $("#pwErr")); }
+  });
+};
+
+/* My account */
+$("#userBtn").onclick = () => {
+  const u = session.user; if (!u) return;
+  $("#accAv").textContent = initial(u.full_name || u.username);
+  $("#accName").textContent = u.full_name || u.username;
+  $("#accUser").textContent = "@" + u.username;
+  $("#accPerms").innerHTML = permChips(u);
+  ["#accOld","#accNew","#accNew2"].forEach(s=>$(s).value=""); $("#accErr").textContent = "";
+  open("#mAccount");
+};
+$("#accForm").onsubmit = e => {
+  e.preventDefault();
+  const o = $("#accOld").value, a = $("#accNew").value, b = $("#accNew2").value;
+  if (!o) return $("#accErr").textContent = "اكتب كلمة المرور الحالية";
+  if (a.length < 4) return $("#accErr").textContent = "كلمة المرور الجديدة يجب أن تكون 4 أحرف على الأقل";
+  if (a !== b) return $("#accErr").textContent = "كلمتا المرور غير متطابقتين";
+  busy($("#accOk"), async () => {
+    try { await Store.changeMyPassword(o, a); $("#mAccount").classList.remove("open"); toast("تم تغيير كلمة المرور"); }
+    catch(err){ handleErr(err, $("#accErr")); }
+  });
+};
+$("#logoutBtn").onclick = async () => {
+  try { await Store.logout(); } catch(e){}
+  setUser(null); closeAll(); toast("تم تسجيل الخروج");
+};
+
+/* Login */
+$("#loginBtn").onclick = () => { $("#lErr").textContent=""; open("#mLogin"); setTimeout(()=>$("#lUser").focus(),50); };
+$("#loginForm").onsubmit = e => {
+  e.preventDefault();
+  busy($("#lOk"), async () => {
+    try {
+      const { token, user } = await Store.login($("#lUser").value.trim(), $("#lPass").value);
+      setUser(user, token);
+      $("#mLogin").classList.remove("open"); $("#lPass").value="";
+      toast(`مرحباً ${user.full_name || user.username}`);
+    } catch(err){ handleErr(err, $("#lErr")); }
+  });
 };
 
 /* ---------------- Events ---------------- */
@@ -762,8 +1148,9 @@ document.addEventListener("keydown", e => {
   if (e.key==="Escape") { if (state.tv && !state.lockedTV) setTV(false); closeAll(); }
 });
 
-document.addEventListener("click", async e => {
+document.addEventListener("click", e => {
   const g = a => e.target.closest(`[data-${a}]`);
+  const user = id => state.users.find(u => u.id == id);
   let el;
   if ((el = g("deliver"))) openDeliver(byId(el.dataset.deliver));
   else if ((el = g("edit"))) openForm(byId(el.dataset.edit));
@@ -776,48 +1163,45 @@ document.addEventListener("click", async e => {
   else if ((el = g("undo"))) {
     const r = byId(el.dataset.undo);
     askConfirm({title:"إلغاء تسليم هذا الطلب؟", info:`سيعود "${r.item}" إلى الطلبات الموجودة ويُمسح تاريخ التسليم واسم المستلم.`, okText:"إلغاء التسليم", danger:false,
-      fn: async () => { await Store.update(r.id, {delivered_date:null, receiver_name:null, delivered_at:null}); toast("أُعيد الطلب إلى المخزن"); }});
+      fn: async () => { await Store.undeliver(r.id); toast("أُعيد الطلب إلى المخزن"); }});
   }
   else if ((el = g("depdel"))) {
     const d = state.deps.find(x=>x.id==el.dataset.depdel);
     askConfirm({title:`حذف "${d.name}"؟`, info:"سيُحذف من القائمة فقط، ولن تتأثر الطلبات المسجلة باسمه.", okText:"حذف",
       fn: async () => { await Store.removeDep(d.id); toast("تم حذف الجهة"); }});
   }
+  else if ((el = g("uedit"))) openUser(user(el.dataset.uedit));
+  else if ((el = g("upw"))) openPw(user(el.dataset.upw));
+  else if ((el = g("udel"))) {
+    const u = user(el.dataset.udel);
+    askConfirm({title:`حذف المستخدم "${u.username}"؟`, info:"لن يستطيع تسجيل الدخول بعد الحذف. الطلبات التي سجّلها تبقى كما هي.", okText:"حذف",
+      fn: async () => { await Store.deleteUser(u.id); toast("تم حذف المستخدم"); refreshUsers(); }});
+  }
 });
 $("#depAddBtn").onclick = async () => {
   const n = $("#depNew").value.trim(); if (!n) return;
-  try { await Store.addDep(n); $("#depNew").value=""; toast("تمت إضافة الجهة"); refresh(); } catch(err){ toast(err.message); }
+  try { await Store.addDep(n); $("#depNew").value=""; toast("تمت إضافة الجهة"); refresh(); } catch(err){ handleErr(err); }
 };
 $("#depNew").onkeydown = e => { if (e.key==="Enter") $("#depAddBtn").click(); };
-
-/* ---------------- Auth ---------------- */
-$("#loginBtn").onclick = () => { $("#lErr").textContent=""; open("#mLogin"); setTimeout(()=>$("#lEmail").focus(),50); };
-$("#loginForm").onsubmit = async e => {
-  e.preventDefault();
-  const {error} = await sb.auth.signInWithPassword({email:$("#lEmail").value.trim(), password:$("#lPass").value});
-  if (error) { $("#lErr").textContent = "بيانات الدخول غير صحيحة"; return; }
-  $("#mLogin").classList.remove("open"); $("#lPass").value=""; toast("مرحباً بك");
-};
-$("#logoutBtn").onclick = async () => { await sb.auth.signOut(); toast("تم تسجيل الخروج"); };
 
 /* ---------------- Boot ---------------- */
 (async function init(){
   tick(); setInterval(tick, 1000);
   if (useSupabase) {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession:false } });
     Store = SupaStore;
-    const { data:{ session } } = await sb.auth.getSession();
-    state.isAdmin = !!session;
-    sb.auth.onAuthStateChange((_e, s) => { state.isAdmin = !!s; applyRole(); });
   } else {
-    state.isAdmin = true;                // الوضع التجريبي: صلاحيات كاملة
     $("#demoBanner").classList.remove("hidden");
   }
-  Store.subscribe(() => refresh());
-  applyRole();
+  if (session.token) { try { session.user = await Store.me(); } catch(e) { session.user = null; } }
+  setUser(session.user, session.user ? session.token : null);
+  Store.subscribe(() => { refresh(); if (state.view === "users") refreshUsers(); });
   await refresh();
   if (state.lockedTV) setTV(true);
-  setInterval(refresh, TV_REFRESH_SECONDS*1000);
+  setInterval(async () => {
+    await refresh();
+    if (session.user) { const me = await Store.me().catch(()=>null); if (!me) { setUser(null); toast("انتهت الجلسة"); } else if (JSON.stringify(me.perms)!==JSON.stringify(session.user.perms) || me.is_super!==session.user.is_super) setUser(me); }
+  }, TV_REFRESH_SECONDS*1000);
 })();
 </script>
 </body>
