@@ -14,7 +14,7 @@
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
   --text:#f3f4f8; --muted:#9aa0b4; --dim:#6b7188;
   --accent:#8b5cf6; --accent2:#3b82f6;
-  --green:#22c55e; --yellow:#eab308; --orange:#f97316; --red:#ef4444;
+  --green:#22c55e; --yellow:#eab308; --orange:#f97316; --red:#ef4444; --teal:#2dd4bf;
   --radius:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -46,6 +46,7 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:16p
 .clock .d{font-size:13px;color:var(--muted);direction:rtl;text-align:right}
 .counter{padding:10px 16px;border-radius:14px;background:var(--glass2);border:1px solid var(--line2);text-align:center;min-width:120px}
 .counter b{display:block;font-size:26px;line-height:1.1;background:linear-gradient(135deg,#c4b5fd,#93c5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.counter.done b{background:linear-gradient(135deg,#5eead4,#86efac);-webkit-background-clip:text;background-clip:text}
 .counter span{font-size:12px;color:var(--muted)}
 
 /* Toolbar */
@@ -59,19 +60,23 @@ select{padding:12px 14px;border-radius:14px;background:var(--bg2);border:1px sol
 .btn:hover{background:rgba(255,255,255,.12)}
 .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;box-shadow:0 6px 24px rgba(139,92,246,.3)}
 .btn.primary:hover{filter:brightness(1.1)}
+.btn.success{background:rgba(45,212,191,.14);border-color:rgba(45,212,191,.4);color:#5eead4}
+.btn.success.solid{background:linear-gradient(135deg,#14b8a6,#22c55e);color:#fff;border-color:transparent}
 .btn.danger{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:#fca5a5}
 .btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
 .btn svg{width:18px;height:18px}
 
 /* Legend */
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:0 4px 12px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:0 4px 12px;align-items:center}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:6px;vertical-align:middle}
+.sec-title{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;margin:0 4px 12px}
+.sec-title .pill{font-size:13px;padding:2px 10px;border-radius:999px;background:var(--glass2);color:var(--muted);font-weight:600}
 
 /* Table */
 .tbl-wrap{overflow:hidden}
 .tbl-scroll{overflow:auto;max-height:calc(100vh - 290px)}
 table{width:100%;border-collapse:collapse}
-thead th{position:sticky;top:0;z-index:1;background:#12141f;text-align:right;font-size:14px;color:var(--muted);font-weight:600;padding:14px 18px;border-bottom:1px solid var(--line2)}
+thead th{white-space:nowrap;position:sticky;top:0;z-index:1;background:#12141f;text-align:right;font-size:14px;color:var(--muted);font-weight:600;padding:14px 18px;border-bottom:1px solid var(--line2)}
 tbody td{padding:16px 18px;border-bottom:1px solid var(--line);font-size:17px;vertical-align:middle}
 tbody tr{transition:background .2s}
 tbody tr:hover{background:rgba(255,255,255,.03)}
@@ -81,17 +86,19 @@ td.dep::before{content:"";position:absolute;right:0;top:12px;bottom:12px;width:4
 .age{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 35%,transparent);white-space:nowrap}
 .age::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
 .date{font-variant-numeric:tabular-nums;direction:ltr;display:inline-block}
-.actions{display:flex;gap:6px;justify-content:flex-start}
+.rcv{display:inline-flex;align-items:center;gap:8px}
+.rcv .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:rgba(45,212,191,.16);color:#5eead4;flex-shrink:0}
+.actions{display:flex;gap:6px;justify-content:flex-start;flex-wrap:wrap}
 tr.new{animation:flash 2.4s ease}
 @keyframes flash{0%{background:rgba(139,92,246,.35)}100%{background:transparent}}
 .empty{text-align:center;padding:60px 20px;color:var(--muted)}
 
 /* Dashboard */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
-.stat{padding:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:18px}
+.stat{padding:18px}
 .stat span{color:var(--muted);font-size:14px}
-.stat b{display:block;font-size:34px;margin-top:6px}
-.stat.s1 b{color:#c4b5fd}.stat.s2 b{color:#93c5fd}.stat.s3 b{color:#86efac}.stat.s4 b{color:#fca5a5}
+.stat b{display:block;font-size:32px;margin-top:6px}
+.stat.s1 b{color:#c4b5fd}.stat.s2 b{color:#93c5fd}.stat.s3 b{color:#5eead4}.stat.s4 b{color:#86efac}.stat.s5 b{color:#fde68a}.stat.s6 b{color:#fca5a5}
 .grid2{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
 .panel{padding:18px}
 .panel h3{font-size:16px;margin-bottom:12px}
@@ -99,15 +106,19 @@ tr.new{animation:flash 2.4s ease}
 .dep-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:10px;background:var(--glass)}
 .dep-add{display:flex;gap:8px;margin-top:12px}
 .dep-add input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;background:var(--bg2);border:1px solid var(--line);outline:none}
-.view-tabs{display:flex;gap:6px;padding:5px;border-radius:14px;background:var(--glass);border:1px solid var(--line)}
+.view-tabs{display:flex;gap:6px;padding:5px;border-radius:14px;background:var(--glass);border:1px solid var(--line);flex-wrap:wrap}
 .view-tabs button{padding:8px 14px;border-radius:10px;font-weight:600;color:var(--muted);font-size:14px}
 .view-tabs button.on{background:var(--glass2);color:var(--text)}
+
+/* TV split (hidden outside TV) */
+.tv-split{display:block}
+.tv-side{display:none}
 
 /* Modal */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
 .modal.open{display:flex;animation:fade .2s}
 @keyframes fade{from{opacity:0}}
-.box{width:100%;max-width:460px;background:#11131d;border:1px solid var(--line2);border-radius:20px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.box{width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;background:#11131d;border:1px solid var(--line2);border-radius:20px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
 .box h2{font-size:20px;margin-bottom:18px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
@@ -117,6 +128,19 @@ tr.new{animation:flash 2.4s ease}
 .box .row .btn{flex:1;justify-content:center}
 .confirm-icon{width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,.15);display:grid;place-items:center;margin:0 auto 14px;color:var(--red)}
 .err{color:#fca5a5;font-size:13px;min-height:18px;margin-top:4px}
+.summary{padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);margin-bottom:16px;font-size:14px;line-height:1.9}
+.summary b{color:var(--muted);font-weight:500;margin-left:6px}
+
+/* Timeline */
+.tl{position:relative;padding-right:26px}
+.tl::before{content:"";position:absolute;right:8px;top:6px;bottom:6px;width:2px;background:var(--line2)}
+.tl-step{position:relative;padding-bottom:16px}
+.tl-step:last-child{padding-bottom:0}
+.tl-step::before{content:"";position:absolute;right:-24px;top:5px;width:14px;height:14px;border-radius:50%;background:var(--sc,var(--accent));box-shadow:0 0 0 4px #11131d}
+.tl-step.off::before{background:#2a2e40}
+.tl-step.off{opacity:.45}
+.tl-step h4{font-size:15px;font-weight:600}
+.tl-step p{font-size:13px;color:var(--muted);margin-top:2px}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1b1e2c;border:1px solid var(--line2);padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -130,37 +154,45 @@ tr.new{animation:flash 2.4s ease}
 /* TV MODE */
 body.tv .wrap{max-width:none;padding:2.2vh 2.5vw}
 body.tv .no-tv{display:none!important}
-body.tv header.top{padding:2.2vh 2vw;margin-bottom:2vh}
+body.tv header.top{padding:2vh 2vw;margin-bottom:2vh}
 body.tv .logo{width:6vh;height:6vh;border-radius:1.6vh}
 body.tv .logo svg{width:3.4vh;height:3.4vh}
 body.tv .brand h1{font-size:3.6vh}
-body.tv .brand p{font-size:2.4vh}
+body.tv .brand p{font-size:2.3vh}
 body.tv .clock .t{font-size:4.4vh}
 body.tv .clock .d{font-size:2vh}
-body.tv .counter{padding:1.2vh 2vw;min-width:14vw}
-body.tv .counter b{font-size:4.8vh}
-body.tv .counter span{font-size:1.7vh}
+body.tv .counter{padding:1.1vh 1.6vw;min-width:11vw}
+body.tv .counter b{font-size:4.4vh}
+body.tv .counter span{font-size:1.6vh}
 body.tv .legend{font-size:1.8vh;margin-bottom:1.4vh}
 body.tv .legend i{width:1.3vh;height:1.3vh}
-body.tv .tbl-scroll{max-height:calc(100vh - 20vh);overflow:hidden}
-body.tv thead th{font-size:2.3vh;padding:1.8vh 2vw}
-body.tv tbody td{font-size:3.1vh;padding:2vh 2vw}
-body.tv td.dep::before{width:.5vw}
-body.tv .age{font-size:2vh;padding:.6vh 1.2vw}
+body.tv .sec-title{font-size:2.6vh;margin-bottom:1.4vh}
+body.tv .sec-title .pill{font-size:1.8vh}
+body.tv .tv-split{display:grid;grid-template-columns:1.7fr 1fr;gap:1.6vw;align-items:start}
+body.tv .tv-side{display:block}
+body.tv .tbl-scroll{max-height:calc(100vh - 24vh);overflow:hidden}
+body.tv thead th{font-size:2.1vh;padding:1.7vh 1.5vw}
+body.tv tbody td{font-size:2.8vh;padding:1.9vh 1.5vw}
+body.tv td.dep::before{width:.45vw}
+body.tv .age{font-size:1.9vh;padding:.5vh 1vw}
 body.tv .age::before{width:1vh;height:1vh}
+body.tv .admin-col{display:none!important}
+body.tv #tvDelivered td{font-size:2.3vh;padding:1.6vh 1.2vw}
+body.tv #tvDelivered .sub{font-size:1.8vh;color:var(--muted);display:block;margin-top:.3vh}
 .tv-exit{position:fixed;bottom:14px;left:14px;opacity:0;transition:.3s;z-index:40}
 body.tv:hover .tv-exit{opacity:.7}
 
 @media (max-width:900px){.grid2{grid-template-columns:1fr}}
 @media (max-width:640px){
   .brand h1{font-size:18px}.clock .t{font-size:20px}
-  thead{display:none}
-  table,tbody,tr,td{display:block;width:100%}
-  tbody tr{padding:12px 14px;border-bottom:1px solid var(--line);position:relative}
-  tbody td{padding:3px 0;border:0;font-size:15px}
-  td.dep{padding-right:12px}
+  .tbl-wrap thead{display:none}
+  .tbl-wrap table,.tbl-wrap tbody,.tbl-wrap tr,.tbl-wrap td{display:block;width:100%}
+  .tbl-wrap tbody tr{padding:12px 14px;border-bottom:1px solid var(--line);position:relative}
+  .tbl-wrap tbody td{padding:3px 0;border:0;font-size:15px}
+  td.dep{padding-right:12px!important}
   td.dep::before{top:2px;bottom:2px}
   td[data-l]::before{content:attr(data-l)": ";color:var(--dim);font-size:13px;margin-left:6px}
+  .tbl-wrap td.act{padding-top:8px}
   .tbl-scroll{max-height:none}
   .toolbar .btn span{display:none}
 }
@@ -178,7 +210,8 @@ body.tv:hover .tv-exit{opacity:.7}
       </div>
     </div>
     <div class="meta">
-      <div class="counter"><b id="count">0</b><span>إجمالي الطلبات الموجودة</span></div>
+      <div class="counter"><b id="count">0</b><span>طلبات موجودة بالمخزن</span></div>
+      <div class="counter done"><b id="countDoneToday">0</b><span>سُلّمت اليوم</span></div>
       <div class="clock"><div class="t" id="clockT">--:--</div><div class="d" id="clockD"></div></div>
     </div>
   </header>
@@ -187,12 +220,13 @@ body.tv:hover .tv-exit{opacity:.7}
 
   <div class="toolbar no-tv">
     <div class="view-tabs">
-      <button id="tabDisplay" class="on">شاشة العرض</button>
-      <button id="tabDash" class="admin-only">لوحة التحكم</button>
+      <button data-view="display" class="on">الطلبات الموجودة</button>
+      <button data-view="delivered">الطلبات المسلّمة</button>
+      <button data-view="dash" class="admin-only">لوحة التحكم</button>
     </div>
     <div class="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input id="q" type="search" placeholder="بحث بالجهة أو الطلب أو التاريخ…">
+      <input id="q" type="search" placeholder="بحث بالجهة، الطلب، التاريخ أو اسم المستلم…">
     </div>
     <select id="sort">
       <option value="desc">الأحدث أولاً</option>
@@ -204,40 +238,69 @@ body.tv:hover .tv-exit{opacity:.7}
     <button class="btn hidden" id="logoutBtn"><span>خروج</span></button>
   </div>
 
-  <!-- DISPLAY VIEW -->
+  <!-- 1) PENDING (+ TV split with recent delivered) -->
   <section id="viewDisplay">
-    <div class="legend">
-      <span><i style="background:var(--green)"></i>0 – 2 يوم</span>
-      <span><i style="background:var(--yellow)"></i>3 – 5 أيام</span>
-      <span><i style="background:var(--orange)"></i>6 – 9 أيام</span>
-      <span><i style="background:var(--red)"></i>10 أيام فأكثر</span>
-      <span class="live" id="liveDot" style="margin-inline-start:auto">مباشر</span>
+    <div class="tv-split">
+      <div>
+        <div class="legend">
+          <span class="sec-title" style="margin:0 0 0 10px">الطلبات الموجودة <span class="pill" id="pendPill">0</span></span>
+          <span><i style="background:var(--green)"></i>0 – 2 يوم</span>
+          <span><i style="background:var(--yellow)"></i>3 – 5 أيام</span>
+          <span><i style="background:var(--orange)"></i>6 – 9 أيام</span>
+          <span><i style="background:var(--red)"></i>10 أيام فأكثر</span>
+          <span class="live" id="liveDot" style="margin-inline-start:auto">مباشر</span>
+        </div>
+        <div class="glass tbl-wrap">
+          <div class="tbl-scroll" id="dispScroll">
+            <table>
+              <thead><tr><th>الجهة</th><th>الطلب عبارة عن</th><th>تاريخ الوصول</th><th>المدة في المخزن</th><th class="admin-col admin-only"></th></tr></thead>
+              <tbody id="dispBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="tv-side">
+        <div class="sec-title">آخر الطلبات المسلّمة</div>
+        <div class="glass tbl-wrap">
+          <table><tbody id="tvDelivered"></tbody></table>
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- 2) DELIVERED -->
+  <section id="viewDelivered" class="hidden no-tv">
+    <div class="sec-title">الطلبات التي تم تسليمها <span class="pill" id="delPill">0</span></div>
     <div class="glass tbl-wrap">
-      <div class="tbl-scroll" id="dispScroll">
+      <div class="tbl-scroll">
         <table>
-          <thead><tr><th>الجهة</th><th>الطلب عبارة عن</th><th>تاريخ الوصول</th><th>المدة في المخزن</th></tr></thead>
-          <tbody id="dispBody"></tbody>
+          <thead><tr><th>الجهة</th><th>الطلب عبارة عن</th><th>تاريخ الوصول</th><th>تاريخ التسليم</th><th>المستلم</th><th>مدة البقاء</th><th></th></tr></thead>
+          <tbody id="delBody"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- DASHBOARD VIEW -->
+  <!-- 3) DASHBOARD -->
   <section id="viewDash" class="hidden no-tv">
     <div class="stats">
       <div class="stat glass s1"><span>إجمالي الطلبات</span><b id="stTotal">0</b></div>
-      <div class="stat glass s2"><span>طلبات اليوم</span><b id="stToday">0</b></div>
-      <div class="stat glass s3"><span>طلبات هذا الشهر</span><b id="stMonth">0</b></div>
-      <div class="stat glass s4"><span>متأخرة (10 أيام+)</span><b id="stLate">0</b></div>
+      <div class="stat glass s2"><span>موجودة بالمخزن</span><b id="stPending">0</b></div>
+      <div class="stat glass s3"><span>تم تسليمها</span><b id="stDelivered">0</b></div>
+      <div class="stat glass s5"><span>وصلت اليوم</span><b id="stToday">0</b></div>
+      <div class="stat glass s4"><span>سُلّمت اليوم</span><b id="stDelToday">0</b></div>
+      <div class="stat glass s6"><span>قديمة لم تُسلّم (10+ أيام)</span><b id="stLate">0</b></div>
     </div>
     <div class="grid2">
-      <div class="glass tbl-wrap">
-        <div class="tbl-scroll">
-          <table>
-            <thead><tr><th>الجهة</th><th>الطلب</th><th>تاريخ الوصول</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
-            <tbody id="dashBody"></tbody>
-          </table>
+      <div>
+        <div class="sec-title">الطلبات الموجودة — إدارة</div>
+        <div class="glass tbl-wrap">
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr><th>الجهة</th><th>الطلب</th><th>تاريخ الوصول</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+              <tbody id="dashBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
       <div class="glass panel">
@@ -258,21 +321,13 @@ body.tv:hover .tv-exit{opacity:.7}
 <div class="modal" id="mForm">
   <form class="box" id="form">
     <h2 id="formTitle">إضافة طلب جديد</h2>
-    <div class="field">
-      <label>الجهة</label>
-      <select id="fDep" required></select>
-    </div>
-    <div class="field hidden" id="fDepOtherWrap">
-      <label>اسم الجهة</label>
-      <input id="fDepOther" placeholder="اكتب اسم الجهة">
-    </div>
-    <div class="field">
-      <label>الطلب عبارة عن</label>
-      <input id="fItem" required placeholder="مثال: أحبار طابعات">
-    </div>
-    <div class="field">
-      <label>تاريخ الوصول</label>
-      <input id="fDate" type="date" required>
+    <div class="field"><label>الجهة</label><select id="fDep" required></select></div>
+    <div class="field hidden" id="fDepOtherWrap"><label>اسم الجهة</label><input id="fDepOther" placeholder="اكتب اسم الجهة"></div>
+    <div class="field"><label>الطلب عبارة عن</label><input id="fItem" required placeholder="مثال: أحبار طابعات"></div>
+    <div class="field"><label>تاريخ الوصول</label><input id="fDate" type="date" required></div>
+    <div id="fDeliveredWrap" class="hidden">
+      <div class="field"><label>تاريخ التسليم</label><input id="fDelDate" type="date"></div>
+      <div class="field"><label>اسم المستلم</label><input id="fRcv"></div>
     </div>
     <div class="err" id="fErr"></div>
     <div class="row">
@@ -282,15 +337,41 @@ body.tv:hover .tv-exit{opacity:.7}
   </form>
 </div>
 
-<!-- Delete confirm -->
-<div class="modal" id="mDel">
-  <div class="box" style="text-align:center;max-width:380px">
-    <div class="confirm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></div>
-    <h2 style="margin-bottom:6px">هل أنت متأكد من حذف هذا الطلب؟</h2>
-    <p id="delInfo" style="color:var(--muted);font-size:14px"></p>
+<!-- Deliver modal -->
+<div class="modal" id="mDeliver">
+  <form class="box" id="deliverForm">
+    <h2>تسليم الطلب</h2>
+    <div class="summary" id="dlvSummary"></div>
+    <div class="field"><label>تاريخ التسليم</label><input id="dDate" type="date" required></div>
+    <div class="field"><label>اسم المستلم</label><input id="dName" required placeholder="مثال: أحمد محمد" list="rcvList" autocomplete="off"></div>
+    <datalist id="rcvList"></datalist>
+    <div class="err" id="dErr"></div>
+    <div class="row">
+      <button type="submit" class="btn success solid" id="dOk">تأكيد التسليم</button>
+      <button type="button" class="btn" data-close>إلغاء</button>
+    </div>
+  </form>
+</div>
+
+<!-- History / timeline -->
+<div class="modal" id="mHist">
+  <div class="box">
+    <h2>سجل الطلب</h2>
+    <div class="summary" id="histSummary"></div>
+    <div class="tl" id="histTl"></div>
+    <div class="row"><button class="btn" data-close>إغلاق</button></div>
+  </div>
+</div>
+
+<!-- Delete / undo confirm -->
+<div class="modal" id="mConfirm">
+  <div class="box" style="text-align:center;max-width:390px">
+    <div class="confirm-icon" id="cIcon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></div>
+    <h2 style="margin-bottom:6px" id="cTitle">هل أنت متأكد من حذف هذا الطلب؟</h2>
+    <p id="cInfo" style="color:var(--muted);font-size:14px"></p>
     <div class="row">
       <button class="btn" data-close>إلغاء</button>
-      <button class="btn danger" id="delOk">حذف</button>
+      <button class="btn danger" id="cOk">حذف</button>
     </div>
   </div>
 </div>
@@ -319,25 +400,23 @@ body.tv:hover .tv-exit{opacity:.7}
 const SUPABASE_URL = "";
 const SUPABASE_ANON_KEY = "";
 const TV_REFRESH_SECONDS = 30;   // تحديث احتياطي لشاشة العرض
+const TV_DELIVERED_COUNT = 8;    // عدد آخر الطلبات المسلّمة على شاشة التلفزيون
 
 /* ---------------- helpers ---------------- */
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pad = n => String(n).padStart(2,"0");
-const todayISO = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const isoOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayISO = () => isoOf(new Date());
 const fmtDate = iso => { if(!iso) return ""; const [y,m,d]=iso.slice(0,10).split("-"); return `${d}/${m}/${y}`; };
-const daysSince = iso => {
-  const [y,m,d] = iso.slice(0,10).split("-").map(Number);
-  const a = Date.UTC(y,m-1,d), n=new Date(), b=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());
-  return Math.max(0, Math.round((b-a)/864e5));
-};
-const ageInfo = days => {
-  if (days <= 2) return {c:"var(--green)"};
-  if (days <= 5) return {c:"var(--yellow)"};
-  if (days <= 9) return {c:"var(--orange)"};
-  return {c:"var(--red)"};
-};
+const fmtStamp = ts => { if(!ts) return ""; const d=new Date(ts); return `${fmtDate(isoOf(d))} — ${d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:true})}`; };
+const utc = iso => { const [y,m,d]=iso.slice(0,10).split("-").map(Number); return Date.UTC(y,m-1,d); };
+const daysBetween = (a,b) => Math.max(0, Math.round((utc(b)-utc(a))/864e5));
+const daysSince = iso => daysBetween(iso, todayISO());
+const ageColor = d => d<=2 ? "var(--green)" : d<=5 ? "var(--yellow)" : d<=9 ? "var(--orange)" : "var(--red)";
 const ageText = d => d===0 ? "اليوم" : d===1 ? "يوم واحد" : d===2 ? "يومان" : d<=10 ? `${d} أيام` : `${d} يوماً`;
+const stayText = d => d===0 ? "نفس اليوم" : ageText(d);
+const isDelivered = o => !!o.delivered_date;
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2400); }
 
 const DEFAULT_DEPS = ["قسم المالية","قسم تقنية المعلومات","قسم الموارد البشرية","قسم المشتريات","قسم الصيانة","قسم المختبر","قسم الإدارة"];
@@ -347,31 +426,36 @@ const useSupabase = !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
 let sb = null;
 
 const LocalStore = (() => {
-  const K = "wh_orders_v1";
+  const K = "wh_orders_v2";
   let mem = null;
   const bc = ("BroadcastChannel" in window) ? new BroadcastChannel("wh_orders") : null;
+  const listeners = [];
   const load = () => {
     if (mem) return mem;
     try { mem = JSON.parse(localStorage.getItem(K)); } catch(e) {}
     if (!mem) {
-      const t = new Date(), d = n => { const x=new Date(t); x.setDate(x.getDate()-n); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`; };
-      mem = { seq: 5, deps: DEFAULT_DEPS.map((n,i)=>({id:i+1,name:n,sort_order:i+1})), depSeq: 7, rows: [
-        {id:1, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(0), created_at:new Date().toISOString()},
-        {id:2, department:"قسم تقنية المعلومات", item:"طابعات", arrival_date:d(4), created_at:new Date().toISOString()},
-        {id:3, department:"قسم المشتريات", item:"أجهزة ماسح ضوئي", arrival_date:d(7), created_at:new Date().toISOString()},
-        {id:4, department:"قسم الموارد البشرية", item:"شاشات كمبيوتر", arrival_date:d(12), created_at:new Date().toISOString()},
+      const d = n => { const x=new Date(); x.setDate(x.getDate()-n); return isoOf(x); };
+      const now = new Date().toISOString();
+      mem = { seq: 7, depSeq: 7, deps: DEFAULT_DEPS.map((n,i)=>({id:i+1,name:n,sort_order:i+1})), rows: [
+        {id:1, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(0), created_at:now},
+        {id:2, department:"قسم تقنية المعلومات", item:"طابعات", arrival_date:d(4), created_at:now},
+        {id:3, department:"قسم المشتريات", item:"أجهزة ماسح ضوئي", arrival_date:d(7), created_at:now},
+        {id:4, department:"قسم الموارد البشرية", item:"شاشات كمبيوتر", arrival_date:d(12), created_at:now},
+        {id:5, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(4), created_at:now, delivered_date:d(0), receiver_name:"أحمد محمد", delivered_at:now},
+        {id:6, department:"قسم تقنية المعلومات", item:"شاشات", arrival_date:d(3), created_at:now, delivered_date:d(1), receiver_name:"خالد علي", delivered_at:now},
+        {id:7, department:"قسم الصيانة", item:"كابلات شبكة", arrival_date:d(9), created_at:now, delivered_date:d(2), receiver_name:"سالم الحارثي", delivered_at:now},
       ]};
     }
     return mem;
   };
-  const save = () => { try { localStorage.setItem(K, JSON.stringify(mem)); } catch(e) {} bc && bc.postMessage("changed"); listeners.forEach(f=>f()); };
-  const listeners = [];
-  window.addEventListener("storage", e => { if (e.key===K) { mem=null; listeners.forEach(f=>f()); } });
-  bc && (bc.onmessage = () => { mem=null; listeners.forEach(f=>f()); });
+  const notify = () => listeners.forEach(f=>f());
+  const save = () => { try { localStorage.setItem(K, JSON.stringify(mem)); } catch(e) {} bc && bc.postMessage("changed"); notify(); };
+  window.addEventListener("storage", e => { if (e.key===K) { mem=null; notify(); } });
+  bc && (bc.onmessage = () => { mem=null; notify(); });
   return {
-    async list(){ return [...load().rows]; },
-    async add(r){ const s=load(); s.rows.push({...r, id:++s.seq, created_at:new Date().toISOString()}); save(); return s.seq; },
-    async update(id,r){ const s=load(); const x=s.rows.find(o=>o.id===id); Object.assign(x,r); save(); },
+    async list(){ return load().rows.map(r=>({...r})); },
+    async add(r){ const s=load(); s.rows.push({...r, id:++s.seq, created_at:new Date().toISOString()}); save(); },
+    async update(id,r){ const s=load(); Object.assign(s.rows.find(o=>o.id===id), r); save(); },
     async remove(id){ const s=load(); s.rows=s.rows.filter(o=>o.id!==id); save(); },
     async listDeps(){ return [...load().deps].sort((a,b)=>a.sort_order-b.sort_order); },
     async addDep(name){ const s=load(); if(s.deps.some(d=>d.name===name)) throw new Error("الجهة موجودة مسبقاً"); s.deps.push({id:++s.depSeq,name,sort_order:s.depSeq}); save(); },
@@ -382,11 +466,11 @@ const LocalStore = (() => {
 
 const SupaStore = {
   async list(){ const {data,error}=await sb.from("requests").select("*"); if(error) throw error; return data; },
-  async add(r){ const {data,error}=await sb.from("requests").insert(r).select("id").single(); if(error) throw error; return data.id; },
+  async add(r){ const {error}=await sb.from("requests").insert(r); if(error) throw error; },
   async update(id,r){ const {error}=await sb.from("requests").update(r).eq("id",id); if(error) throw error; },
   async remove(id){ const {error}=await sb.from("requests").delete().eq("id",id); if(error) throw error; },
   async listDeps(){ const {data,error}=await sb.from("departments").select("*").order("sort_order"); if(error) throw error; return data; },
-  async addDep(name){ const {error}=await sb.from("departments").insert({name,sort_order:Date.now()%1e9}); if(error) throw new Error(error.code==="23505"?"الجهة موجودة مسبقاً":error.message); },
+  async addDep(name){ const {error}=await sb.from("departments").insert({name,sort_order:Math.floor(Date.now()/1000)}); if(error) throw new Error(error.code==="23505"?"الجهة موجودة مسبقاً":error.message); },
   async removeDep(id){ const {error}=await sb.from("departments").delete().eq("id",id); if(error) throw error; },
   subscribe(fn){
     sb.channel("wh-live")
@@ -400,7 +484,9 @@ let Store = LocalStore;
 
 /* ---------------- State ---------------- */
 const params = new URLSearchParams(location.search);
-const state = { rows:[], deps:[], q:"", sort:"desc", view:"display", isAdmin:false, tv:false, lockedTV: params.has("tv") || location.hash==="#tv", editingId:null, deletingId:null, lastIds:new Set(), firstLoad:true };
+const state = { rows:[], deps:[], q:"", sort:"desc", view:"display", isAdmin:false, tv:false,
+  lockedTV: params.has("tv") || location.hash==="#tv",
+  editingId:null, deliveringId:null, confirmFn:null, lastIds:new Set(), firstLoad:true };
 
 async function refresh(){
   try {
@@ -410,66 +496,110 @@ async function refresh(){
   } catch(e){ console.error(e); toast("تعذّر تحميل البيانات"); }
 }
 
-function filtered(){
-  const q = state.q.trim().toLowerCase();
-  let r = state.rows.filter(o => !q ||
-    o.department.toLowerCase().includes(q) ||
-    o.item.toLowerCase().includes(q) ||
-    fmtDate(o.arrival_date).includes(q) || o.arrival_date.includes(q));
-  const dir = state.sort==="asc" ? 1 : -1;
-  r.sort((a,b) => (a.arrival_date.localeCompare(b.arrival_date) || String(a.created_at).localeCompare(String(b.created_at))) * dir);
-  return r;
+function matches(o, q){
+  if (!q) return true;
+  return [o.department, o.item, o.receiver_name, fmtDate(o.arrival_date), o.arrival_date, fmtDate(o.delivered_date), o.delivered_date]
+    .some(v => v && String(v).toLowerCase().includes(q));
 }
+function listPending(){
+  const q = state.q.trim().toLowerCase(), dir = state.sort==="asc" ? 1 : -1;
+  return state.rows.filter(o => !isDelivered(o) && matches(o,q))
+    .sort((a,b) => (a.arrival_date.localeCompare(b.arrival_date) || String(a.created_at).localeCompare(String(b.created_at))) * dir);
+}
+function listDelivered(){
+  const q = state.q.trim().toLowerCase(), dir = state.sort==="asc" ? 1 : -1;
+  return state.rows.filter(o => isDelivered(o) && matches(o,q))
+    .sort((a,b) => (a.delivered_date.localeCompare(b.delivered_date) || String(a.delivered_at||"").localeCompare(String(b.delivered_at||""))) * dir);
+}
+const initial = n => (n||"؟").trim().charAt(0);
 
 function render(){
-  const rows = filtered();
-  $("#count").textContent = state.rows.length;
+  const t = todayISO();
+  const pendingAll = state.rows.filter(o=>!isDelivered(o));
+  const deliveredAll = state.rows.filter(isDelivered);
+  $("#count").textContent = pendingAll.length;
+  $("#countDoneToday").textContent = deliveredAll.filter(o=>o.delivered_date.slice(0,10)===t).length;
 
-  // display table
-  const newIds = new Set(state.rows.map(r=>r.id));
-  $("#dispBody").innerHTML = rows.length ? rows.map(o => {
-    const d = daysSince(o.arrival_date), a = ageInfo(d);
+  // 1) pending
+  const pend = listPending();
+  $("#pendPill").textContent = pend.length;
+  const showAct = state.isAdmin && !state.tv;
+  $("#dispBody").innerHTML = pend.length ? pend.map(o => {
+    const d = daysSince(o.arrival_date);
     const isNew = !state.firstLoad && !state.lastIds.has(o.id);
-    return `<tr class="${isNew?"new":""}" style="--c:${a.c}">
+    return `<tr class="${isNew?"new":""}" style="--c:${ageColor(d)}">
       <td class="dep">${esc(o.department)}</td>
       <td data-l="الطلب">${esc(o.item)}</td>
       <td data-l="تاريخ الوصول"><span class="date">${fmtDate(o.arrival_date)}</span></td>
-      <td data-l="المدة"><span class="age">${ageText(d)}</span></td></tr>`;
-  }).join("") : `<tr><td colspan="4" class="empty">${state.q?"لا توجد نتائج مطابقة":"لا توجد طلبات حالياً"}</td></tr>`;
-  state.lastIds = newIds; state.firstLoad = false;
+      <td data-l="المدة"><span class="age">${ageText(d)}</span></td>
+      ${showAct ? `<td class="admin-col act"><button class="btn sm success" data-deliver="${o.id}">تسليم الطلب</button></td>` : ""}
+    </tr>`;
+  }).join("") : `<tr><td colspan="5" class="empty">${state.q?"لا توجد نتائج مطابقة":"لا توجد طلبات في المخزن حالياً"}</td></tr>`;
+  state.lastIds = new Set(pendingAll.map(r=>r.id)); state.firstLoad = false;
+  document.querySelectorAll("th.admin-col").forEach(th => th.classList.toggle("hidden", !showAct));
 
-  // dashboard
+  // TV side: last delivered
+  const recent = [...deliveredAll].sort((a,b)=> (b.delivered_date.localeCompare(a.delivered_date) || String(b.delivered_at||"").localeCompare(String(a.delivered_at||"")))).slice(0, TV_DELIVERED_COUNT);
+  $("#tvDelivered").innerHTML = recent.length ? recent.map(o => `<tr style="--c:var(--teal)">
+      <td class="dep">${esc(o.department)}<span class="sub">${esc(o.item)}</span></td>
+      <td><span class="date">${fmtDate(o.delivered_date)}</span><span class="sub">${esc(o.receiver_name)}</span></td></tr>`).join("")
+    : `<tr><td class="empty">لا توجد طلبات مسلّمة بعد</td></tr>`;
+
+  // 2) delivered
+  const del = listDelivered();
+  $("#delPill").textContent = del.length;
+  $("#delBody").innerHTML = del.length ? del.map(o => {
+    const stay = daysBetween(o.arrival_date, o.delivered_date);
+    return `<tr style="--c:var(--teal)">
+      <td class="dep">${esc(o.department)}</td>
+      <td data-l="الطلب">${esc(o.item)}</td>
+      <td data-l="الوصول"><span class="date">${fmtDate(o.arrival_date)}</span></td>
+      <td data-l="التسليم"><span class="date">${fmtDate(o.delivered_date)}</span></td>
+      <td data-l="المستلم"><span class="rcv"><span class="av">${esc(initial(o.receiver_name))}</span>${esc(o.receiver_name)}</span></td>
+      <td data-l="بقي"><span class="age" style="--c:${ageColor(stay)}">${stayText(stay)}</span></td>
+      <td class="act"><div class="actions">
+        <button class="btn sm" data-hist="${o.id}">السجل</button>
+        ${state.isAdmin ? `<button class="btn sm" data-edit="${o.id}">تعديل</button><button class="btn sm" data-undo="${o.id}">إلغاء التسليم</button><button class="btn sm danger" data-del="${o.id}">حذف</button>` : ""}
+      </div></td></tr>`;
+  }).join("") : `<tr><td colspan="7" class="empty">${state.q?"لا توجد نتائج مطابقة":"لا توجد طلبات مسلّمة بعد"}</td></tr>`;
+
+  // 3) dashboard
   if (state.isAdmin) {
-    const t = todayISO(), m = t.slice(0,7);
     $("#stTotal").textContent = state.rows.length;
+    $("#stPending").textContent = pendingAll.length;
+    $("#stDelivered").textContent = deliveredAll.length;
     $("#stToday").textContent = state.rows.filter(o=>o.arrival_date.slice(0,10)===t).length;
-    $("#stMonth").textContent = state.rows.filter(o=>o.arrival_date.startsWith(m)).length;
-    $("#stLate").textContent  = state.rows.filter(o=>daysSince(o.arrival_date)>=10).length;
-    $("#dashBody").innerHTML = rows.length ? rows.map(o => {
-      const d = daysSince(o.arrival_date), a = ageInfo(d);
-      return `<tr style="--c:${a.c}">
+    $("#stDelToday").textContent = deliveredAll.filter(o=>o.delivered_date.slice(0,10)===t).length;
+    $("#stLate").textContent = pendingAll.filter(o=>daysSince(o.arrival_date)>=10).length;
+    $("#dashBody").innerHTML = pend.length ? pend.map(o => {
+      const d = daysSince(o.arrival_date);
+      return `<tr style="--c:${ageColor(d)}">
         <td class="dep">${esc(o.department)}</td>
         <td data-l="الطلب">${esc(o.item)}</td>
         <td data-l="الوصول"><span class="date">${fmtDate(o.arrival_date)}</span></td>
         <td data-l="المدة"><span class="age">${ageText(d)}</span></td>
-        <td><div class="actions">
+        <td class="act"><div class="actions">
+          <button class="btn sm success" data-deliver="${o.id}">تسليم</button>
           <button class="btn sm" data-edit="${o.id}">تعديل</button>
+          <button class="btn sm" data-hist="${o.id}">السجل</button>
           <button class="btn sm danger" data-del="${o.id}">حذف</button>
         </div></td></tr>`;
-    }).join("") : `<tr><td colspan="5" class="empty">لا توجد طلبات</td></tr>`;
+    }).join("") : `<tr><td colspan="5" class="empty">لا توجد طلبات في المخزن</td></tr>`;
     $("#depList").innerHTML = state.deps.map(d =>
       `<div class="dep-item"><span>${esc(d.name)}</span><button class="btn sm danger" data-depdel="${d.id}">حذف</button></div>`).join("")
       || `<div class="empty" style="padding:20px">لا توجد جهات</div>`;
   }
+  // receivers suggestions
+  $("#rcvList").innerHTML = [...new Set(deliveredAll.map(o=>o.receiver_name).filter(Boolean))].map(n=>`<option value="${esc(n)}">`).join("");
 }
 
 /* ---------------- Views / roles ---------------- */
+const VIEWS = {display:"#viewDisplay", delivered:"#viewDelivered", dash:"#viewDash"};
 function setView(v){
   state.view = v;
-  $("#viewDisplay").classList.toggle("hidden", v!=="display");
-  $("#viewDash").classList.toggle("hidden", v!=="dash");
-  $("#tabDisplay").classList.toggle("on", v==="display");
-  $("#tabDash").classList.toggle("on", v==="dash");
+  Object.entries(VIEWS).forEach(([k,sel]) => $(sel).classList.toggle("hidden", k!==v));
+  document.querySelectorAll(".view-tabs button").forEach(b => b.classList.toggle("on", b.dataset.view===v));
+  $("#subtitle").textContent = v==="delivered" ? "سجل الطلبات المسلّمة للجهات" : v==="dash" ? "لوحة التحكم" : "طلبات الجهات الواردة";
 }
 function applyRole(){
   document.querySelectorAll(".admin-only").forEach(el => el.classList.toggle("hidden", !state.isAdmin));
@@ -485,8 +615,9 @@ function setTV(on){
   state.tv = on;
   document.body.classList.toggle("tv", on);
   $("#tvExit").classList.toggle("hidden", !on || state.lockedTV);
-  if (on) { setView("display"); state.q=""; $("#q").value=""; state.sort="desc"; $("#sort").value="desc"; render(); startAutoScroll(); try{document.documentElement.requestFullscreen?.()}catch(e){} }
-  else { stopAutoScroll(); if (document.fullscreenElement) document.exitFullscreen?.(); }
+  if (on) { setView("display"); state.q=""; $("#q").value=""; state.sort="desc"; $("#sort").value="desc"; $("#subtitle").textContent="الطلبات الواردة والمسلّمة"; startAutoScroll(); try{document.documentElement.requestFullscreen?.()}catch(e){} }
+  else { stopAutoScroll(); setView(state.view); if (document.fullscreenElement) document.exitFullscreen?.(); }
+  render();
 }
 function startAutoScroll(){
   stopAutoScroll();
@@ -509,9 +640,11 @@ function tick(){
 
 /* ---------------- Modals ---------------- */
 const open = id => $(id).classList.add("open");
-const close = el => el.closest(".modal").classList.remove("open");
-document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => close(b));
+const closeAll = () => document.querySelectorAll(".modal.open").forEach(m=>m.classList.remove("open"));
+document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => b.closest(".modal").classList.remove("open"));
 document.querySelectorAll(".modal").forEach(m => m.addEventListener("click", e => { if (e.target===m) m.classList.remove("open"); }));
+const byId = id => state.rows.find(r => r.id == id);
+const summaryHTML = o => `<div><b>الجهة:</b>${esc(o.department)}</div><div><b>الطلب:</b>${esc(o.item)}</div><div><b>تاريخ الوصول:</b><span class="date">${fmtDate(o.arrival_date)}</span></div>`;
 
 function fillDepSelect(selected){
   const names = state.deps.map(d=>d.name);
@@ -531,6 +664,10 @@ function openForm(row){
   fillDepSelect(row?.department);
   $("#fItem").value = row?.item || "";
   $("#fDate").value = row ? row.arrival_date.slice(0,10) : todayISO();
+  const del = row && isDelivered(row);
+  $("#fDeliveredWrap").classList.toggle("hidden", !del);
+  $("#fDelDate").value = del ? row.delivered_date.slice(0,10) : "";
+  $("#fRcv").value = del ? row.receiver_name || "" : "";
   $("#fErr").textContent = "";
   open("#mForm"); setTimeout(()=>$("#fItem").focus(), 50);
 }
@@ -542,9 +679,16 @@ $("#form").onsubmit = async e => {
   if (!dep) return $("#fErr").textContent = "اختر الجهة";
   if (!item) return $("#fErr").textContent = "اكتب محتوى الطلب";
   if (!date) return $("#fErr").textContent = "حدد تاريخ الوصول";
+  const rec = {department:dep, item, arrival_date:date};
+  const row = state.editingId && byId(state.editingId);
+  if (row && isDelivered(row)) {
+    const dd = $("#fDelDate").value, rn = $("#fRcv").value.trim();
+    if (!dd || !rn) return $("#fErr").textContent = "أكمل تاريخ التسليم واسم المستلم";
+    if (dd < date) return $("#fErr").textContent = "تاريخ التسليم لا يمكن أن يكون قبل تاريخ الوصول";
+    Object.assign(rec, {delivered_date:dd, receiver_name:rn});
+  }
   const btn = $("#fSave"); btn.disabled = true;
   try {
-    const rec = {department:dep, item, arrival_date:date};
     if (state.editingId) { await Store.update(state.editingId, rec); toast("تم تحديث الطلب"); }
     else { await Store.add(rec); toast("تمت إضافة الطلب"); }
     $("#mForm").classList.remove("open");
@@ -553,37 +697,93 @@ $("#form").onsubmit = async e => {
   btn.disabled = false;
 };
 
+/* Deliver */
+function openDeliver(o){
+  state.deliveringId = o.id;
+  $("#dlvSummary").innerHTML = summaryHTML(o);
+  $("#dDate").value = todayISO(); $("#dDate").min = o.arrival_date.slice(0,10);
+  $("#dName").value = ""; $("#dErr").textContent = "";
+  open("#mDeliver"); setTimeout(()=>$("#dName").focus(), 50);
+}
+$("#deliverForm").onsubmit = async e => {
+  e.preventDefault();
+  const o = byId(state.deliveringId), dd = $("#dDate").value, rn = $("#dName").value.trim();
+  if (!dd) return $("#dErr").textContent = "حدد تاريخ التسليم";
+  if (!rn) return $("#dErr").textContent = "اكتب اسم المستلم";
+  if (dd < o.arrival_date.slice(0,10)) return $("#dErr").textContent = "تاريخ التسليم لا يمكن أن يكون قبل تاريخ الوصول";
+  const btn = $("#dOk"); btn.disabled = true;
+  try {
+    await Store.update(o.id, {delivered_date:dd, receiver_name:rn, delivered_at:new Date().toISOString()});
+    $("#mDeliver").classList.remove("open");
+    toast(`تم تسليم الطلب إلى ${rn}`);
+    await refresh();
+  } catch(err){ $("#dErr").textContent = "تعذّر الحفظ: " + (err.message||err); }
+  btn.disabled = false;
+};
+
+/* History timeline */
+function openHistory(o){
+  const del = isDelivered(o);
+  const stayEnd = del ? o.delivered_date : todayISO();
+  const stay = daysBetween(o.arrival_date, stayEnd);
+  const steps = [
+    {t:"وصل الطلب إلى المخزن", p:`الجهة: ${esc(o.department)} — ${esc(o.item)}`, c:"var(--accent)"},
+    {t:"تم تسجيل تاريخ الوصول", p:`<span class="date">${fmtDate(o.arrival_date)}</span>${o.created_at?` · سُجّل في النظام ${fmtStamp(o.created_at)}`:""}`, c:"var(--accent2)"},
+    {t: del ? "بقي في المخزن" : "موجود في المخزن حالياً", p: del ? `المدة: ${stayText(stay)}` : `منذ ${ageText(stay)}`, c: ageColor(stay)},
+    {t:"تم تسليم الطلب", p: del ? `تاريخ التسليم: <span class="date">${fmtDate(o.delivered_date)}</span>${o.delivered_at?` · سُجّل ${fmtStamp(o.delivered_at)}`:""}` : "بانتظار التسليم", c:"var(--teal)", off:!del},
+    {t:"اسم المستلم", p: del ? esc(o.receiver_name) : "—", c:"var(--teal)", off:!del},
+    {t:"انتقل إلى الطلبات المسلّمة", p: del ? "مكتمل" : "—", c:"var(--green)", off:!del},
+  ];
+  $("#histSummary").innerHTML = summaryHTML(o);
+  $("#histTl").innerHTML = steps.map(s => `<div class="tl-step ${s.off?"off":""}" style="--sc:${s.c}"><h4>${s.t}</h4><p>${s.p}</p></div>`).join("");
+  open("#mHist");
+}
+
+/* Confirm (delete / undo delivery) */
+function askConfirm({title, info, okText, danger=true, fn}){
+  $("#cTitle").textContent = title; $("#cInfo").textContent = info;
+  $("#cOk").textContent = okText; $("#cOk").className = "btn " + (danger ? "danger" : "primary");
+  $("#cIcon").classList.toggle("hidden", !danger);
+  state.confirmFn = fn; open("#mConfirm");
+}
+$("#cOk").onclick = async () => {
+  try { await state.confirmFn(); $("#mConfirm").classList.remove("open"); refresh(); }
+  catch(err){ toast("تعذّر تنفيذ العملية: " + (err.message||err)); }
+};
+
 /* ---------------- Events ---------------- */
 $("#addBtn").onclick = () => openForm(null);
-$("#tabDisplay").onclick = () => setView("display");
-$("#tabDash").onclick = () => setView("dash");
+document.querySelectorAll(".view-tabs button").forEach(b => b.onclick = () => setView(b.dataset.view));
 $("#q").oninput = e => { state.q = e.target.value; render(); };
 $("#sort").onchange = e => { state.sort = e.target.value; render(); };
 $("#tvBtn").onclick = () => setTV(true);
 $("#tvExit").onclick = () => setTV(false);
 document.addEventListener("keydown", e => {
-  if (e.key==="Escape") { if (state.tv && !state.lockedTV) setTV(false); document.querySelectorAll(".modal.open").forEach(m=>m.classList.remove("open")); }
+  if (e.key==="Escape") { if (state.tv && !state.lockedTV) setTV(false); closeAll(); }
 });
 
 document.addEventListener("click", async e => {
-  const ed = e.target.closest("[data-edit]"), dl = e.target.closest("[data-del]"), dd = e.target.closest("[data-depdel]");
-  if (ed) openForm(state.rows.find(r=>r.id==ed.dataset.edit));
-  if (dl) {
-    const r = state.rows.find(x=>x.id==dl.dataset.del); state.deletingId = r.id;
-    $("#delInfo").textContent = `${r.department} — ${r.item} (${fmtDate(r.arrival_date)})`;
-    open("#mDel");
+  const g = a => e.target.closest(`[data-${a}]`);
+  let el;
+  if ((el = g("deliver"))) openDeliver(byId(el.dataset.deliver));
+  else if ((el = g("edit"))) openForm(byId(el.dataset.edit));
+  else if ((el = g("hist"))) openHistory(byId(el.dataset.hist));
+  else if ((el = g("del"))) {
+    const r = byId(el.dataset.del);
+    askConfirm({title:"هل أنت متأكد من حذف هذا الطلب؟", info:`${r.department} — ${r.item} (${fmtDate(r.arrival_date)})`, okText:"حذف",
+      fn: async () => { await Store.remove(r.id); toast("تم حذف الطلب"); }});
   }
-  if (dd) {
-    const d = state.deps.find(x=>x.id==dd.dataset.depdel);
-    if (confirm(`حذف "${d.name}" من قائمة الجهات؟ (لن تُحذف الطلبات المرتبطة بها)`)) {
-      try { await Store.removeDep(d.id); toast("تم حذف الجهة"); refresh(); } catch(err){ toast("تعذّر الحذف"); }
-    }
+  else if ((el = g("undo"))) {
+    const r = byId(el.dataset.undo);
+    askConfirm({title:"إلغاء تسليم هذا الطلب؟", info:`سيعود "${r.item}" إلى الطلبات الموجودة ويُمسح تاريخ التسليم واسم المستلم.`, okText:"إلغاء التسليم", danger:false,
+      fn: async () => { await Store.update(r.id, {delivered_date:null, receiver_name:null, delivered_at:null}); toast("أُعيد الطلب إلى المخزن"); }});
+  }
+  else if ((el = g("depdel"))) {
+    const d = state.deps.find(x=>x.id==el.dataset.depdel);
+    askConfirm({title:`حذف "${d.name}"؟`, info:"سيُحذف من القائمة فقط، ولن تتأثر الطلبات المسجلة باسمه.", okText:"حذف",
+      fn: async () => { await Store.removeDep(d.id); toast("تم حذف الجهة"); }});
   }
 });
-$("#delOk").onclick = async () => {
-  try { await Store.remove(state.deletingId); toast("تم حذف الطلب"); $("#mDel").classList.remove("open"); refresh(); }
-  catch(err){ toast("تعذّر الحذف: " + (err.message||err)); }
-};
 $("#depAddBtn").onclick = async () => {
   const n = $("#depNew").value.trim(); if (!n) return;
   try { await Store.addDep(n); $("#depNew").value=""; toast("تمت إضافة الجهة"); refresh(); } catch(err){ toast(err.message); }
@@ -617,7 +817,7 @@ $("#logoutBtn").onclick = async () => { await sb.auth.signOut(); toast("تم ت�
   applyRole();
   await refresh();
   if (state.lockedTV) setTV(true);
-  setInterval(refresh, TV_REFRESH_SECONDS*1000);   // تحديث احتياطي + تحديث ألوان المدة
+  setInterval(refresh, TV_REFRESH_SECONDS*1000);
 })();
 </script>
 </body>
