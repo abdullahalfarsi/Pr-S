@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>طلبات المخزن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --bg:#07080d; --bg2:#0d0f18;
+  --glass:rgba(255,255,255,.045); --glass2:rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --text:#f3f4f8; --muted:#9aa0b4; --dim:#6b7188;
+  --accent:#8b5cf6; --accent2:#3b82f6;
+  --green:#22c55e; --yellow:#eab308; --orange:#f97316; --red:#ef4444;
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;
+  background:var(--bg); color:var(--text);
+  background-image:
+    radial-gradient(900px 500px at 85% -10%, rgba(139,92,246,.22), transparent 60%),
+    radial-gradient(800px 500px at 0% 110%, rgba(59,130,246,.16), transparent 60%);
+  background-attachment:fixed; min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.wrap{max-width:1400px;margin:0 auto;padding:20px 16px 40px}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+
+/* Header */
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 22px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 30px rgba(139,92,246,.35)}
+.logo svg{width:26px;height:26px}
+.brand h1{font-size:22px;font-weight:700;line-height:1.2}
+.brand p{font-size:14px;color:var(--muted);margin-top:2px}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.clock{text-align:left;direction:ltr}
+.clock .t{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.clock .d{font-size:13px;color:var(--muted);direction:rtl;text-align:right}
+.counter{padding:10px 16px;border-radius:14px;background:var(--glass2);border:1px solid var(--line2);text-align:center;min-width:120px}
+.counter b{display:block;font-size:26px;line-height:1.1;background:linear-gradient(135deg,#c4b5fd,#93c5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.counter span{font-size:12px;color:var(--muted)}
+
+/* Toolbar */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:220px;position:relative}
+.search input{width:100%;padding:12px 44px 12px 14px;border-radius:14px;background:var(--glass);border:1px solid var(--line);outline:none;transition:border .2s}
+.search input:focus{border-color:var(--accent)}
+.search svg{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--dim)}
+select{padding:12px 14px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);outline:none}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:14px;font-weight:600;background:var(--glass2);border:1px solid var(--line2);transition:.2s;white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.12)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;box-shadow:0 6px 24px rgba(139,92,246,.3)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.danger{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:#fca5a5}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn svg{width:18px;height:18px}
+
+/* Legend */
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:0 4px 12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:6px;vertical-align:middle}
+
+/* Table */
+.tbl-wrap{overflow:hidden}
+.tbl-scroll{overflow:auto;max-height:calc(100vh - 290px)}
+table{width:100%;border-collapse:collapse}
+thead th{position:sticky;top:0;z-index:1;background:#12141f;text-align:right;font-size:14px;color:var(--muted);font-weight:600;padding:14px 18px;border-bottom:1px solid var(--line2)}
+tbody td{padding:16px 18px;border-bottom:1px solid var(--line);font-size:17px;vertical-align:middle}
+tbody tr{transition:background .2s}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tbody tr:last-child td{border-bottom:0}
+td.dep{font-weight:600;position:relative}
+td.dep::before{content:"";position:absolute;right:0;top:12px;bottom:12px;width:4px;border-radius:4px;background:var(--c)}
+.age{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 35%,transparent);white-space:nowrap}
+.age::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.date{font-variant-numeric:tabular-nums;direction:ltr;display:inline-block}
+.actions{display:flex;gap:6px;justify-content:flex-start}
+tr.new{animation:flash 2.4s ease}
+@keyframes flash{0%{background:rgba(139,92,246,.35)}100%{background:transparent}}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+
+/* Dashboard */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+.stat{padding:20px}
+.stat span{color:var(--muted);font-size:14px}
+.stat b{display:block;font-size:34px;margin-top:6px}
+.stat.s1 b{color:#c4b5fd}.stat.s2 b{color:#93c5fd}.stat.s3 b{color:#86efac}.stat.s4 b{color:#fca5a5}
+.grid2{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+.panel{padding:18px}
+.panel h3{font-size:16px;margin-bottom:12px}
+.dep-list{display:flex;flex-direction:column;gap:6px;max-height:420px;overflow:auto}
+.dep-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:10px;background:var(--glass)}
+.dep-add{display:flex;gap:8px;margin-top:12px}
+.dep-add input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;background:var(--bg2);border:1px solid var(--line);outline:none}
+.view-tabs{display:flex;gap:6px;padding:5px;border-radius:14px;background:var(--glass);border:1px solid var(--line)}
+.view-tabs button{padding:8px 14px;border-radius:10px;font-weight:600;color:var(--muted);font-size:14px}
+.view-tabs button.on{background:var(--glass2);color:var(--text)}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal.open{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.box{width:100%;max-width:460px;background:#11131d;border:1px solid var(--line2);border-radius:20px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.box h2{font-size:20px;margin-bottom:18px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px 14px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);outline:none}
+.field input:focus,.field select:focus{border-color:var(--accent)}
+.box .row{display:flex;gap:10px;justify-content:flex-start;margin-top:20px}
+.box .row .btn{flex:1;justify-content:center}
+.confirm-icon{width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,.15);display:grid;place-items:center;margin:0 auto 14px;color:var(--red)}
+.err{color:#fca5a5;font-size:13px;min-height:18px;margin-top:4px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1b1e2c;border:1px solid var(--line2);padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.banner{font-size:13px;color:#fde68a;background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.3);padding:8px 14px;border-radius:12px;margin-bottom:14px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulse 2s infinite}
+.live.off::before{background:var(--dim);animation:none}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.hidden{display:none!important}
+
+/* TV MODE */
+body.tv .wrap{max-width:none;padding:2.2vh 2.5vw}
+body.tv .no-tv{display:none!important}
+body.tv header.top{padding:2.2vh 2vw;margin-bottom:2vh}
+body.tv .logo{width:6vh;height:6vh;border-radius:1.6vh}
+body.tv .logo svg{width:3.4vh;height:3.4vh}
+body.tv .brand h1{font-size:3.6vh}
+body.tv .brand p{font-size:2.4vh}
+body.tv .clock .t{font-size:4.4vh}
+body.tv .clock .d{font-size:2vh}
+body.tv .counter{padding:1.2vh 2vw;min-width:14vw}
+body.tv .counter b{font-size:4.8vh}
+body.tv .counter span{font-size:1.7vh}
+body.tv .legend{font-size:1.8vh;margin-bottom:1.4vh}
+body.tv .legend i{width:1.3vh;height:1.3vh}
+body.tv .tbl-scroll{max-height:calc(100vh - 20vh);overflow:hidden}
+body.tv thead th{font-size:2.3vh;padding:1.8vh 2vw}
+body.tv tbody td{font-size:3.1vh;padding:2vh 2vw}
+body.tv td.dep::before{width:.5vw}
+body.tv .age{font-size:2vh;padding:.6vh 1.2vw}
+body.tv .age::before{width:1vh;height:1vh}
+.tv-exit{position:fixed;bottom:14px;left:14px;opacity:0;transition:.3s;z-index:40}
+body.tv:hover .tv-exit{opacity:.7}
+
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .brand h1{font-size:18px}.clock .t{font-size:20px}
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tbody tr{padding:12px 14px;border-bottom:1px solid var(--line);position:relative}
+  tbody td{padding:3px 0;border:0;font-size:15px}
+  td.dep{padding-right:12px}
+  td.dep::before{top:2px;bottom:2px}
+  td[data-l]::before{content:attr(data-l)": ";color:var(--dim);font-size:13px;margin-left:6px}
+  .tbl-scroll{max-height:none}
+  .toolbar .btn span{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top glass">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></div>
+      <div>
+        <h1>قسم المخازن الفنية</h1>
+        <p id="subtitle">طلبات الجهات الواردة</p>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="counter"><b id="count">0</b><span>إجمالي الطلبات الموجودة</span></div>
+      <div class="clock"><div class="t" id="clockT">--:--</div><div class="d" id="clockD"></div></div>
+    </div>
+  </header>
+
+  <div id="demoBanner" class="banner hidden no-tv">وضع تجريبي: البيانات محفوظة في هذا المتصفح فقط. أضف مفاتيح Supabase في أعلى الكود لتفعيل قاعدة البيانات والتحديث بين الأجهزة.</div>
+
+  <div class="toolbar no-tv">
+    <div class="view-tabs">
+      <button id="tabDisplay" class="on">شاشة العرض</button>
+      <button id="tabDash" class="admin-only">لوحة التحكم</button>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="بحث بالجهة أو الطلب أو التاريخ…">
+    </div>
+    <select id="sort">
+      <option value="desc">الأحدث أولاً</option>
+      <option value="asc">الأقدم أولاً</option>
+    </select>
+    <button class="btn primary admin-only" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span>إضافة طلب</span></button>
+    <button class="btn" id="tvBtn" title="وضع الشاشة الكبيرة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>TV Mode</span></button>
+    <button class="btn" id="loginBtn"><span>دخول المسؤول</span></button>
+    <button class="btn hidden" id="logoutBtn"><span>خروج</span></button>
+  </div>
+
+  <!-- DISPLAY VIEW -->
+  <section id="viewDisplay">
+    <div class="legend">
+      <span><i style="background:var(--green)"></i>0 – 2 يوم</span>
+      <span><i style="background:var(--yellow)"></i>3 – 5 أيام</span>
+      <span><i style="background:var(--orange)"></i>6 – 9 أيام</span>
+      <span><i style="background:var(--red)"></i>10 أيام فأكثر</span>
+      <span class="live" id="liveDot" style="margin-inline-start:auto">مباشر</span>
+    </div>
+    <div class="glass tbl-wrap">
+      <div class="tbl-scroll" id="dispScroll">
+        <table>
+          <thead><tr><th>الجهة</th><th>الطلب عبارة عن</th><th>تاريخ الوصول</th><th>المدة في المخزن</th></tr></thead>
+          <tbody id="dispBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD VIEW -->
+  <section id="viewDash" class="hidden no-tv">
+    <div class="stats">
+      <div class="stat glass s1"><span>إجمالي الطلبات</span><b id="stTotal">0</b></div>
+      <div class="stat glass s2"><span>طلبات اليوم</span><b id="stToday">0</b></div>
+      <div class="stat glass s3"><span>طلبات هذا الشهر</span><b id="stMonth">0</b></div>
+      <div class="stat glass s4"><span>متأخرة (10 أيام+)</span><b id="stLate">0</b></div>
+    </div>
+    <div class="grid2">
+      <div class="glass tbl-wrap">
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>الجهة</th><th>الطلب</th><th>تاريخ الوصول</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+            <tbody id="dashBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="glass panel">
+        <h3>إدارة الجهات</h3>
+        <div class="dep-list" id="depList"></div>
+        <div class="dep-add">
+          <input id="depNew" placeholder="اسم جهة جديدة">
+          <button class="btn sm primary" id="depAddBtn">إضافة</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button class="btn sm tv-exit" id="tvExit">خروج من وضع الشاشة (Esc)</button>
+
+<!-- Add / Edit modal -->
+<div class="modal" id="mForm">
+  <form class="box" id="form">
+    <h2 id="formTitle">إضافة طلب جديد</h2>
+    <div class="field">
+      <label>الجهة</label>
+      <select id="fDep" required></select>
+    </div>
+    <div class="field hidden" id="fDepOtherWrap">
+      <label>اسم الجهة</label>
+      <input id="fDepOther" placeholder="اكتب اسم الجهة">
+    </div>
+    <div class="field">
+      <label>الطلب عبارة عن</label>
+      <input id="fItem" required placeholder="مثال: أحبار طابعات">
+    </div>
+    <div class="field">
+      <label>تاريخ الوصول</label>
+      <input id="fDate" type="date" required>
+    </div>
+    <div class="err" id="fErr"></div>
+    <div class="row">
+      <button type="submit" class="btn primary" id="fSave">حفظ الطلب</button>
+      <button type="button" class="btn" data-close>إلغاء</button>
+    </div>
+  </form>
+</div>
+
+<!-- Delete confirm -->
+<div class="modal" id="mDel">
+  <div class="box" style="text-align:center;max-width:380px">
+    <div class="confirm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></div>
+    <h2 style="margin-bottom:6px">هل أنت متأكد من حذف هذا الطلب؟</h2>
+    <p id="delInfo" style="color:var(--muted);font-size:14px"></p>
+    <div class="row">
+      <button class="btn" data-close>إلغاء</button>
+      <button class="btn danger" id="delOk">حذف</button>
+    </div>
+  </div>
+</div>
+
+<!-- Login -->
+<div class="modal" id="mLogin">
+  <form class="box" id="loginForm">
+    <h2>دخول المسؤول</h2>
+    <div class="field"><label>البريد الإلكتروني</label><input id="lEmail" type="email" required dir="ltr"></div>
+    <div class="field"><label>كلمة المرور</label><input id="lPass" type="password" required dir="ltr"></div>
+    <div class="err" id="lErr"></div>
+    <div class="row">
+      <button type="submit" class="btn primary">دخول</button>
+      <button type="button" class="btn" data-close>إلغاء</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   الإعدادات — ضع مفاتيح مشروع Supabase هنا
+   (اتركها فارغة للتجربة: الوضع التجريبي يحفظ في المتصفح)
+   ========================================================= */
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
+const TV_REFRESH_SECONDS = 30;   // تحديث احتياطي لشاشة العرض
+
+/* ---------------- helpers ---------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2,"0");
+const todayISO = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const fmtDate = iso => { if(!iso) return ""; const [y,m,d]=iso.slice(0,10).split("-"); return `${d}/${m}/${y}`; };
+const daysSince = iso => {
+  const [y,m,d] = iso.slice(0,10).split("-").map(Number);
+  const a = Date.UTC(y,m-1,d), n=new Date(), b=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());
+  return Math.max(0, Math.round((b-a)/864e5));
+};
+const ageInfo = days => {
+  if (days <= 2) return {c:"var(--green)"};
+  if (days <= 5) return {c:"var(--yellow)"};
+  if (days <= 9) return {c:"var(--orange)"};
+  return {c:"var(--red)"};
+};
+const ageText = d => d===0 ? "اليوم" : d===1 ? "يوم واحد" : d===2 ? "يومان" : d<=10 ? `${d} أيام` : `${d} يوماً`;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2400); }
+
+const DEFAULT_DEPS = ["قسم المالية","قسم تقنية المعلومات","قسم الموارد البشرية","قسم المشتريات","قسم الصيانة","قسم المختبر","قسم الإدارة"];
+
+/* ---------------- Data layer ---------------- */
+const useSupabase = !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
+let sb = null;
+
+const LocalStore = (() => {
+  const K = "wh_orders_v1";
+  let mem = null;
+  const bc = ("BroadcastChannel" in window) ? new BroadcastChannel("wh_orders") : null;
+  const load = () => {
+    if (mem) return mem;
+    try { mem = JSON.parse(localStorage.getItem(K)); } catch(e) {}
+    if (!mem) {
+      const t = new Date(), d = n => { const x=new Date(t); x.setDate(x.getDate()-n); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`; };
+      mem = { seq: 5, deps: DEFAULT_DEPS.map((n,i)=>({id:i+1,name:n,sort_order:i+1})), depSeq: 7, rows: [
+        {id:1, department:"قسم المالية", item:"أحبار طابعات", arrival_date:d(0), created_at:new Date().toISOString()},
+        {id:2, department:"قسم تقنية المعلومات", item:"طابعات", arrival_date:d(4), created_at:new Date().toISOString()},
+        {id:3, department:"قسم المشتريات", item:"أجهزة ماسح ضوئي", arrival_date:d(7), created_at:new Date().toISOString()},
+        {id:4, department:"قسم الموارد البشرية", item:"شاشات كمبيوتر", arrival_date:d(12), created_at:new Date().toISOString()},
+      ]};
+    }
+    return mem;
+  };
+  const save = () => { try { localStorage.setItem(K, JSON.stringify(mem)); } catch(e) {} bc && bc.postMessage("changed"); listeners.forEach(f=>f()); };
+  const listeners = [];
+  window.addEventListener("storage", e => { if (e.key===K) { mem=null; listeners.forEach(f=>f()); } });
+  bc && (bc.onmessage = () => { mem=null; listeners.forEach(f=>f()); });
+  return {
+    async list(){ return [...load().rows]; },
+    async add(r){ const s=load(); s.rows.push({...r, id:++s.seq, created_at:new Date().toISOString()}); save(); return s.seq; },
+    async update(id,r){ const s=load(); const x=s.rows.find(o=>o.id===id); Object.assign(x,r); save(); },
+    async remove(id){ const s=load(); s.rows=s.rows.filter(o=>o.id!==id); save(); },
+    async listDeps(){ return [...load().deps].sort((a,b)=>a.sort_order-b.sort_order); },
+    async addDep(name){ const s=load(); if(s.deps.some(d=>d.name===name)) throw new Error("الجهة موجودة مسبقاً"); s.deps.push({id:++s.depSeq,name,sort_order:s.depSeq}); save(); },
+    async removeDep(id){ const s=load(); s.deps=s.deps.filter(d=>d.id!==id); save(); },
+    subscribe(fn){ listeners.push(fn); },
+  };
+})();
+
+const SupaStore = {
+  async list(){ const {data,error}=await sb.from("requests").select("*"); if(error) throw error; return data; },
+  async add(r){ const {data,error}=await sb.from("requests").insert(r).select("id").single(); if(error) throw error; return data.id; },
+  async update(id,r){ const {error}=await sb.from("requests").update(r).eq("id",id); if(error) throw error; },
+  async remove(id){ const {error}=await sb.from("requests").delete().eq("id",id); if(error) throw error; },
+  async listDeps(){ const {data,error}=await sb.from("departments").select("*").order("sort_order"); if(error) throw error; return data; },
+  async addDep(name){ const {error}=await sb.from("departments").insert({name,sort_order:Date.now()%1e9}); if(error) throw new Error(error.code==="23505"?"الجهة موجودة مسبقاً":error.message); },
+  async removeDep(id){ const {error}=await sb.from("departments").delete().eq("id",id); if(error) throw error; },
+  subscribe(fn){
+    sb.channel("wh-live")
+      .on("postgres_changes",{event:"*",schema:"public",table:"requests"},fn)
+      .on("postgres_changes",{event:"*",schema:"public",table:"departments"},fn)
+      .subscribe(st => { $("#liveDot").classList.toggle("off", st!=="SUBSCRIBED"); });
+  },
+};
+
+let Store = LocalStore;
+
+/* ---------------- State ---------------- */
+const params = new URLSearchParams(location.search);
+const state = { rows:[], deps:[], q:"", sort:"desc", view:"display", isAdmin:false, tv:false, lockedTV: params.has("tv") || location.hash==="#tv", editingId:null, deletingId:null, lastIds:new Set(), firstLoad:true };
+
+async function refresh(){
+  try {
+    const [rows,deps] = await Promise.all([Store.list(), Store.listDeps()]);
+    state.rows = rows; state.deps = deps;
+    render();
+  } catch(e){ console.error(e); toast("تعذّر تحميل البيانات"); }
+}
+
+function filtered(){
+  const q = state.q.trim().toLowerCase();
+  let r = state.rows.filter(o => !q ||
+    o.department.toLowerCase().includes(q) ||
+    o.item.toLowerCase().includes(q) ||
+    fmtDate(o.arrival_date).includes(q) || o.arrival_date.includes(q));
+  const dir = state.sort==="asc" ? 1 : -1;
+  r.sort((a,b) => (a.arrival_date.localeCompare(b.arrival_date) || String(a.created_at).localeCompare(String(b.created_at))) * dir);
+  return r;
+}
+
+function render(){
+  const rows = filtered();
+  $("#count").textContent = state.rows.length;
+
+  // display table
+  const newIds = new Set(state.rows.map(r=>r.id));
+  $("#dispBody").innerHTML = rows.length ? rows.map(o => {
+    const d = daysSince(o.arrival_date), a = ageInfo(d);
+    const isNew = !state.firstLoad && !state.lastIds.has(o.id);
+    return `<tr class="${isNew?"new":""}" style="--c:${a.c}">
+      <td class="dep">${esc(o.department)}</td>
+      <td data-l="الطلب">${esc(o.item)}</td>
+      <td data-l="تاريخ الوصول"><span class="date">${fmtDate(o.arrival_date)}</span></td>
+      <td data-l="المدة"><span class="age">${ageText(d)}</span></td></tr>`;
+  }).join("") : `<tr><td colspan="4" class="empty">${state.q?"لا توجد نتائج مطابقة":"لا توجد طلبات حالياً"}</td></tr>`;
+  state.lastIds = newIds; state.firstLoad = false;
+
+  // dashboard
+  if (state.isAdmin) {
+    const t = todayISO(), m = t.slice(0,7);
+    $("#stTotal").textContent = state.rows.length;
+    $("#stToday").textContent = state.rows.filter(o=>o.arrival_date.slice(0,10)===t).length;
+    $("#stMonth").textContent = state.rows.filter(o=>o.arrival_date.startsWith(m)).length;
+    $("#stLate").textContent  = state.rows.filter(o=>daysSince(o.arrival_date)>=10).length;
+    $("#dashBody").innerHTML = rows.length ? rows.map(o => {
+      const d = daysSince(o.arrival_date), a = ageInfo(d);
+      return `<tr style="--c:${a.c}">
+        <td class="dep">${esc(o.department)}</td>
+        <td data-l="الطلب">${esc(o.item)}</td>
+        <td data-l="الوصول"><span class="date">${fmtDate(o.arrival_date)}</span></td>
+        <td data-l="المدة"><span class="age">${ageText(d)}</span></td>
+        <td><div class="actions">
+          <button class="btn sm" data-edit="${o.id}">تعديل</button>
+          <button class="btn sm danger" data-del="${o.id}">حذف</button>
+        </div></td></tr>`;
+    }).join("") : `<tr><td colspan="5" class="empty">لا توجد طلبات</td></tr>`;
+    $("#depList").innerHTML = state.deps.map(d =>
+      `<div class="dep-item"><span>${esc(d.name)}</span><button class="btn sm danger" data-depdel="${d.id}">حذف</button></div>`).join("")
+      || `<div class="empty" style="padding:20px">لا توجد جهات</div>`;
+  }
+}
+
+/* ---------------- Views / roles ---------------- */
+function setView(v){
+  state.view = v;
+  $("#viewDisplay").classList.toggle("hidden", v!=="display");
+  $("#viewDash").classList.toggle("hidden", v!=="dash");
+  $("#tabDisplay").classList.toggle("on", v==="display");
+  $("#tabDash").classList.toggle("on", v==="dash");
+}
+function applyRole(){
+  document.querySelectorAll(".admin-only").forEach(el => el.classList.toggle("hidden", !state.isAdmin));
+  $("#loginBtn").classList.toggle("hidden", state.isAdmin || !useSupabase);
+  $("#logoutBtn").classList.toggle("hidden", !state.isAdmin || !useSupabase);
+  if (!state.isAdmin && state.view==="dash") setView("display");
+  render();
+}
+
+/* ---------------- TV mode ---------------- */
+let scrollTimer = null;
+function setTV(on){
+  state.tv = on;
+  document.body.classList.toggle("tv", on);
+  $("#tvExit").classList.toggle("hidden", !on || state.lockedTV);
+  if (on) { setView("display"); state.q=""; $("#q").value=""; state.sort="desc"; $("#sort").value="desc"; render(); startAutoScroll(); try{document.documentElement.requestFullscreen?.()}catch(e){} }
+  else { stopAutoScroll(); if (document.fullscreenElement) document.exitFullscreen?.(); }
+}
+function startAutoScroll(){
+  stopAutoScroll();
+  const el = $("#dispScroll"); let pause = 120; el.scrollTop = 0;
+  scrollTimer = setInterval(() => {
+    if (el.scrollHeight <= el.clientHeight + 4) return;
+    if (pause > 0) { pause--; return; }
+    el.scrollTop += 1;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) { pause = 160; setTimeout(()=>{ el.scrollTop = 0; }, 3000); }
+  }, 40);
+}
+function stopAutoScroll(){ clearInterval(scrollTimer); scrollTimer=null; }
+
+/* ---------------- Clock ---------------- */
+function tick(){
+  const n = new Date();
+  $("#clockT").textContent = n.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:true});
+  $("#clockD").textContent = n.toLocaleDateString("ar-OM-u-nu-latn",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+}
+
+/* ---------------- Modals ---------------- */
+const open = id => $(id).classList.add("open");
+const close = el => el.closest(".modal").classList.remove("open");
+document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => close(b));
+document.querySelectorAll(".modal").forEach(m => m.addEventListener("click", e => { if (e.target===m) m.classList.remove("open"); }));
+
+function fillDepSelect(selected){
+  const names = state.deps.map(d=>d.name);
+  const isOther = selected && !names.includes(selected);
+  $("#fDep").innerHTML = `<option value="" disabled ${selected?"":"selected"}>اختر الجهة</option>` +
+    names.map(n=>`<option ${n===selected?"selected":""}>${esc(n)}</option>`).join("") +
+    `<option value="__other" ${isOther?"selected":""}>أخرى</option>`;
+  $("#fDepOtherWrap").classList.toggle("hidden", !isOther);
+  $("#fDepOther").value = isOther ? selected : "";
+}
+$("#fDep").onchange = () => { const o=$("#fDep").value==="__other"; $("#fDepOtherWrap").classList.toggle("hidden",!o); if(o) $("#fDepOther").focus(); };
+
+function openForm(row){
+  state.editingId = row ? row.id : null;
+  $("#formTitle").textContent = row ? "تعديل الطلب" : "إضافة طلب جديد";
+  $("#fSave").textContent = row ? "حفظ التعديل" : "حفظ الطلب";
+  fillDepSelect(row?.department);
+  $("#fItem").value = row?.item || "";
+  $("#fDate").value = row ? row.arrival_date.slice(0,10) : todayISO();
+  $("#fErr").textContent = "";
+  open("#mForm"); setTimeout(()=>$("#fItem").focus(), 50);
+}
+
+$("#form").onsubmit = async e => {
+  e.preventDefault();
+  let dep = $("#fDep").value; if (dep==="__other") dep = $("#fDepOther").value.trim();
+  const item = $("#fItem").value.trim(), date = $("#fDate").value;
+  if (!dep) return $("#fErr").textContent = "اختر الجهة";
+  if (!item) return $("#fErr").textContent = "اكتب محتوى الطلب";
+  if (!date) return $("#fErr").textContent = "حدد تاريخ الوصول";
+  const btn = $("#fSave"); btn.disabled = true;
+  try {
+    const rec = {department:dep, item, arrival_date:date};
+    if (state.editingId) { await Store.update(state.editingId, rec); toast("تم تحديث الطلب"); }
+    else { await Store.add(rec); toast("تمت إضافة الطلب"); }
+    $("#mForm").classList.remove("open");
+    await refresh();
+  } catch(err){ $("#fErr").textContent = "تعذّر الحفظ: " + (err.message||err); }
+  btn.disabled = false;
+};
+
+/* ---------------- Events ---------------- */
+$("#addBtn").onclick = () => openForm(null);
+$("#tabDisplay").onclick = () => setView("display");
+$("#tabDash").onclick = () => setView("dash");
+$("#q").oninput = e => { state.q = e.target.value; render(); };
+$("#sort").onchange = e => { state.sort = e.target.value; render(); };
+$("#tvBtn").onclick = () => setTV(true);
+$("#tvExit").onclick = () => setTV(false);
+document.addEventListener("keydown", e => {
+  if (e.key==="Escape") { if (state.tv && !state.lockedTV) setTV(false); document.querySelectorAll(".modal.open").forEach(m=>m.classList.remove("open")); }
+});
+
+document.addEventListener("click", async e => {
+  const ed = e.target.closest("[data-edit]"), dl = e.target.closest("[data-del]"), dd = e.target.closest("[data-depdel]");
+  if (ed) openForm(state.rows.find(r=>r.id==ed.dataset.edit));
+  if (dl) {
+    const r = state.rows.find(x=>x.id==dl.dataset.del); state.deletingId = r.id;
+    $("#delInfo").textContent = `${r.department} — ${r.item} (${fmtDate(r.arrival_date)})`;
+    open("#mDel");
+  }
+  if (dd) {
+    const d = state.deps.find(x=>x.id==dd.dataset.depdel);
+    if (confirm(`حذف "${d.name}" من قائمة الجهات؟ (لن تُحذف الطلبات المرتبطة بها)`)) {
+      try { await Store.removeDep(d.id); toast("تم حذف الجهة"); refresh(); } catch(err){ toast("تعذّر الحذف"); }
+    }
+  }
+});
+$("#delOk").onclick = async () => {
+  try { await Store.remove(state.deletingId); toast("تم حذف الطلب"); $("#mDel").classList.remove("open"); refresh(); }
+  catch(err){ toast("تعذّر الحذف: " + (err.message||err)); }
+};
+$("#depAddBtn").onclick = async () => {
+  const n = $("#depNew").value.trim(); if (!n) return;
+  try { await Store.addDep(n); $("#depNew").value=""; toast("تمت إضافة الجهة"); refresh(); } catch(err){ toast(err.message); }
+};
+$("#depNew").onkeydown = e => { if (e.key==="Enter") $("#depAddBtn").click(); };
+
+/* ---------------- Auth ---------------- */
+$("#loginBtn").onclick = () => { $("#lErr").textContent=""; open("#mLogin"); setTimeout(()=>$("#lEmail").focus(),50); };
+$("#loginForm").onsubmit = async e => {
+  e.preventDefault();
+  const {error} = await sb.auth.signInWithPassword({email:$("#lEmail").value.trim(), password:$("#lPass").value});
+  if (error) { $("#lErr").textContent = "بيانات الدخول غير صحيحة"; return; }
+  $("#mLogin").classList.remove("open"); $("#lPass").value=""; toast("مرحباً بك");
+};
+$("#logoutBtn").onclick = async () => { await sb.auth.signOut(); toast("تم تسجيل الخروج"); };
+
+/* ---------------- Boot ---------------- */
+(async function init(){
+  tick(); setInterval(tick, 1000);
+  if (useSupabase) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    Store = SupaStore;
+    const { data:{ session } } = await sb.auth.getSession();
+    state.isAdmin = !!session;
+    sb.auth.onAuthStateChange((_e, s) => { state.isAdmin = !!s; applyRole(); });
+  } else {
+    state.isAdmin = true;                // الوضع التجريبي: صلاحيات كاملة
+    $("#demoBanner").classList.remove("hidden");
+  }
+  Store.subscribe(() => refresh());
+  applyRole();
+  await refresh();
+  if (state.lockedTV) setTV(true);
+  setInterval(refresh, TV_REFRESH_SECONDS*1000);   // تحديث احتياطي + تحديث ألوان المدة
+})();
+</script>
+</body>
+</html>
